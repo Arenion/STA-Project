@@ -59,6 +59,10 @@ struct infoarduino{
     float ratio;
     int RPM;
 };
+struct nextobjectif{
+    int x;
+    int y;
+};
 
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]);//focntion transformant le ratio et le rpm en vitesse mot gauche et droite
 void lecturedonneescamera(char pseudofich[MAX_CARS]);//connexion de socket de la caméra pour lire données: caméra -> voiture
@@ -74,6 +78,7 @@ void CtrlHandler(int signum);
 void gestionfinprogramme();
 
 struct infoarduino INFORMATIONARDUINO;
+struct nextobjectif NEXTOBJECTIF;
 char INFOCAMERA[MAX_CARS-1];//données de la caméra, via une af_unix
 int FD;
 char donneecontroleur[MAX_CARS-1];//donnée du controleur, via une socket af_inet
@@ -161,6 +166,7 @@ int main(int argc, char *argv[]) {
     pthread_t thread_socketcamera;
     pthread_t thread_sendcommandarduino;
     pthread_t thread_getposition;//thread permettant d'obtenir la position via le marvelmind
+    pthread_t thread_stop; //thread gérant une commande stop du controlleur controlleur -> voiture 
 
 
     //initialisation des arguments des threads
@@ -171,11 +177,15 @@ int main(int argc, char *argv[]) {
     char objdefault[MAX_CARS]="0 0";
     strcpy(objectifsuivant.message,objdefault);
 
-    struct arg_socket demandereservation={6000, 0};// Pour la demande de reservation, on note juste un entier représentant le tronçon demandé
+    struct arg_socket demandestop={6002,"0"};// envoi de 1 pour une demande d'arrét
 
-    struct arg_socket reussiteobjectif={6001, 0};// 0 pour non réussite, 1 pour réussite
+    struct arg_socket demandereservation={6000, "0"};// Pour la demande de reservation, on note juste un entier représentant le tronçon demandé
+
+    struct arg_socket reussiteobjectif={6001, "0"};// 0 pour non réussite, 1 pour réussite
     
-    struct arg_socket actualisationtronçon={6002,0};//même syntaxe que demandereservation
+    struct arg_socket actualisationtronçon={6002,"0"};//même syntaxe que demandereservation
+    
+
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <port> <baudrate>\n", argv[0]);
         fprintf(stderr, "Exemple: %s /dev/ttyAMA0 9600\n", argv[0]);
@@ -199,6 +209,7 @@ int main(int argc, char *argv[]) {
     //signal (SIGINT, CtrlHandler);
     signal (SIGQUIT, CtrlHandler);
 
+    pthread_create(&thread_stop,NULL,receptioncontrolleur,(void*)&demandestop);
     pthread_create(&thread_socketcamera,NULL,lecturedonneescamera,PSEUDOFICHIER);
     pthread_create(&thread_sendcommandarduino,NULL,envoidedonne,NULL);
     //pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void*)&autorisationdepassement);
@@ -208,6 +219,7 @@ int main(int argc, char *argv[]) {
     //pthread_create(&thread_actuatlisationtronçon,NULL,envoicontrolleur,(void*)&actualisationtronçon);
     //pthread_create(&thread_getposition,NULL,receptionposition,NULL);
     
+    pthread_join(thread_stop,NULL);
     pthread_join(thread_sendcommandarduino,NULL);
     pthread_join(thread_socketcamera,NULL);
     close(FD);
@@ -431,7 +443,26 @@ void receptioncontrolleur(struct arg_socket * arg)
 
     nbcars=recv(sd1, buff,MAX_CARS, 0) ; // Les deux NULL a la fin indique que je ne veux pas recuperer l'adresse de l'ecrivain
     
-    if (nbcars)strcpy(arg->message,buff);
+    if (nbcars){
+        
+        strcpy(arg->message,buff);
+        if  (local_port=6000){//gestion des depassements
+            printf("DEPASSEMENT AUTORISE\n");
+            ETAT=DEPPASSEMENT;
+            }
+        if (local_port=6001){
+            printf("OBJECTIF SUIVANT RECU\n");
+            sscanf("%d %d",&(NEXTOBJECTIF.x),&(NEXTOBJECTIF.y));
+            }
+        if (local_port==6002){//gestion de la commande stop
+            printf("ARRET DU SYSTEME\n");
+            send_command(FD,0,0);//si on reçoit un message du thread stop on arréte les moteurs
+            terminateProgram=true;//et on arréte les programmes
+            }
+
+    
+    
+        }   
     
     }
     while (strcmp(buff, "fin")!=0 ||(terminateProgram));

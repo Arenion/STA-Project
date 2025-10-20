@@ -1,8 +1,8 @@
 all :
 	gcc main.c -o teleop.e
 	rm -rf /tmp/cam.sock
-	./teleop.e
-	python ../Python/line_finder.py
+	./teleop.e /dev/ttAMA0 9600
+	
 
 clean :
 	rm -rf teleop.e

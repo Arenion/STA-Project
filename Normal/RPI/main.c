@@ -41,6 +41,16 @@
 #define largeur_voiture 113 //Largeur de la voiture entre deux roues
 
 
+enum demandeetat{
+    DEMANDEORMAL,
+    DEMANDEVIRAGE,
+    DEMANDEINIT,
+    DEMANDEGARER,
+    DEMANDEOBSTACLE,
+    DEMANDESTOP,
+    DEMANDEDEPPASSEMENT,
+};
+
 enum etat{
     NORMAL,
     VIRAGE,
@@ -82,7 +92,8 @@ struct nextobjectif NEXTOBJECTIF;
 char INFOCAMERA[MAX_CARS-1];//données de la caméra, via une af_unix
 int FD;
 char donneecontroleur[MAX_CARS-1];//donnée du controleur, via une socket af_inet
-enum etat ETAT=INIT;//état de la voiture
+enum demandeetat DEMANDEETAT=DEMANDEINIT;//état de la voiture
+enum etat ETAT=INIT;
 int32_t position[2];//position actuelle de la voiture
 bool terminateProgram=false;
 char vitesse[MAX_CARS-1];
@@ -278,34 +289,30 @@ void lecturedonneescamera(char *pseudofich){
 }
 
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]){
-    if (ratio==0.5){
+    float erreur=ratio-0.5;
+    if (erreur>=0){
         vitessemot[0]=(int8_t)RPM;
-        vitessemot[1]=(int8_t)RPM;//on prend l'opposé pour la vitesse du moteur droit car celui ci est monté à l'envers
+        vitessemot[1]=(int8_t)(RPM*(1-4*erreur));
     };
-    if (ratio>0.5){
-        vitessemot[0]=(int8_t)RPM;
-        vitessemot[1]=(int8_t)(RPM-(ratio-0.5)*4*RPM);
-    }
-    if(ratio<0.5){
-        vitessemot[0]=(int8_t)-RPM+4*RPM*ratio;
-        vitessemot[1]=(int8_t)RPM;
-    }
+    if(erreur<0){
+        vitessemot[0]=(int8_t)(RPM*(1+4*erreur));
+        vitessemot[1]=(int8_t)(RPM);
+    };
+
 }
 
 void envoidedonne(char doneecam[MAX_CARS-1]){
-    ETAT=NORMAL;
+    DEMANDEETAT=DEMANDEORMAL;
 
     while (1){
 	usleep(100000);
-       	ETAT=NORMAL; 
-        //if (strcmp(donneecontroleur,"stop")==0)ETAT=STOP;
 
-        //if(ETAT=NORMAL){
+    if(ETAT=NORMAL){
 	printf("etat normal");
 	printf("%f, %d\n",INFORMATIONARDUINO.ratio,INFORMATIONARDUINO.RPM);
         ratRPMtovitmot(INFORMATIONARDUINO.ratio,INFORMATIONARDUINO.RPM,vitessemot);
         send_command(FD,vitessemot[0],vitessemot[1]);
-       // }
+       }
         //if(ETAT=STOP){
         //    send_command(FD,0,0);
        // }

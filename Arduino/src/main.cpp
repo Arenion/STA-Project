@@ -49,7 +49,7 @@ void loop()
     // Lit les entrées et adapte son comportement à la trame reçue
     parse_serial_input();
 
-    delay(10);
+    delay(1);
 }
 
 void encoder1_pulse_handler()

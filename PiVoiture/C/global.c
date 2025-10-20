@@ -76,8 +76,6 @@ pthread_mutex_t MUTEX_INFORMATIONARDUINO;
 struct position NEXTOBJECTIF;
 pthread_mutex_t MUTEX_NEXTOBJECTIF;
 
-#define OBJECTIF_STOP ((struct position){-1, -1})
-
 struct position POSITION;//position actuelle de la voiture
 pthread_mutex_t MUTEX_POSITION;
 
@@ -93,4 +91,7 @@ char obstacle[MAX_CARS-1];
 char panneau[MAX_CARS-1];
 int8_t vitessemot[2];
 int RPM;
+
+
 int ANGLE;//Angle de la voiture, issu de l'arduino
+

@@ -2,29 +2,11 @@
 /*Application : gère la communication entre la raspberry de la voiture et le reste de l'environement, et controle la raspberry dans les différents modes de fonctionnement de la voiture*/ 
 
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <termios.h>
-#include <sys/un.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <pthread.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include "marvelmind.c/src/marvelmind.h"
-#include <sys/wait.h>
-#include <time.h>
-#include <signal.h>
-#include <stdatomic.h>
-#include <math.h>
+
 
 #include "Statemachine/statemachine.h"
 #include "global.c"
-
+#include "communicationarduino.h"
 
 void *lecturedonneescamera(void *arg);//connexion de socket de la caméra pour lire données: caméra -> voiture
 void *lignedroite(void *arg);//fonction intérprétant les données et les envoie à l'arduino, c'est ici qu'on interprete dans quel mode on se trouve: voiture -> raspberry 
@@ -103,8 +85,6 @@ void send_command(int fd, int8_t rpmg, int8_t rpmd) {
 
 
 int main(int argc, char *argv[]) {
-    int vitessemot[2]={80,80};
-
     //initialisation des threads
     pthread_t thread_autorisationdepassement;// thread pour l'autorisation de depassement controlleur -> voiture
     pthread_t thread_objectifsuivant;// thread pour l'envoi d'un nouvel objectif controlleur -> voiture
@@ -178,11 +158,11 @@ void *lecturedonneescamera(void *arg){
     char *pseudofich = (char *)arg;
     int sd_lect;// socked de dialogue du lecteur
     struct sockaddr_un addr_lect,addr_ecriv;//Pour definir l'adresse du lecteur et recupérer l'adresse de l'émetteur
-    int lg_addr; //pour spécifier la longueur en octet d'une adresse
+    //int lg_addr; //pour spécifier la longueur en octet d'une adresse
     int nbcar;//déifni le nmobre d'octets lus
     char buff_lect[MAX_CARS-1]="debut";//buffer de récéption de data 
     int check_exit=1;
-    char infocamera[MAX_CARS-1]="@";
+    //char infocamera[MAX_CARS-1]="@";
     float ratio =0.5;
     //Etape 1 : Création du socket de lécture
     sd_lect=socket(AF_UNIX, SOCK_DGRAM,0);
@@ -200,7 +180,7 @@ void *lecturedonneescamera(void *arg){
     // printf("%d\n",(strcmp(buff_lect,"exit\n")));
     while(!(check_exit==0)||(terminateProgram)){
         nbcar = recv(sd_lect,buff_lect, MAX_CARS,0);//On ne récupére pas l'adresse de l'écrivain
-        if (nbcar) {pthread_lock(&MUTEX_POSITION);
+        if (nbcar) {pthread_mutex_lock(&MUTEX_POSITION);
             strcpy(INFOCAMERA,buff_lect);
             printf("Infos caméra reçues: ");
             printf(INFOCAMERA);
@@ -228,53 +208,7 @@ void *lecturedonneescamera(void *arg){
     return NULL;
 }
 
-void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]){
-    float erreur=ratio-0.5;
-    if (erreur>=0){
-        vitessemot[0]=(int8_t)RPM;
-        vitessemot[1]=(int8_t)(RPM*(1-3*erreur));
-    };
-    if(erreur<0){
-        vitessemot[0]=(int8_t)(RPM*(1+3*erreur));
-        vitessemot[1]=(int8_t)(RPM);
-    };
 
-}
-
-void *lignedroite(void *arg){
-    char * doneecam = (char *)arg;
-    DEMANDEETAT=DEMANDEORMAL;
-
-    while (1){
-	usleep(100000);
-    //if(ETAT=NORMAL){
-	printf("etat normal");
-    pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
-	printf("%f, %d\n",INFORMATIONARDUINO.ratio,INFORMATIONARDUINO.RPM);
-    ratRPMtovitmot(INFORMATIONARDUINO.ratio,INFORMATIONARDUINO.RPM,vitessemot);
-    pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
-    send_command(FD,vitessemot[0],vitessemot[1]);
-
-    //   }
-    // if(ETAT=DEPPASSEMENT){
-    //     pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
-    //     turn(-45,INFORMATIONARDUINO.RPM);
-    //     advance(1.4*200,INFORMATIONARDUINO.RPM);
-    //     turn(45,INFORMATIONARDUINO.RPM);
-    //     advance(100,INFORMATIONARDUINO.RPM);
-    //     turn(45,INFORMATIONARDUINO.RPM);
-    //     advance(1.4*200,INFORMATIONARDUINO.RPM);
-    //     turn(-45,INFORMATIONARDUINO.RPM);
-    //     pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
-
-
-
-    // }
-        //if(ETAT=STOP){
-        //    send_command(FD,0,0);
-       // }
-     }
-}
 
 void envoicontrolleur(struct arg_socket * arg)
 {
@@ -410,20 +344,20 @@ void receptioncontrolleur(struct arg_socket * arg)
     if (nbcars){
         
         strcpy(arg->message,buff);
-        if  (local_port=6000){//gestion des depassements
+        if  (local_port==6000){//gestion des depassements
             printf("DEPASSEMENT AUTORISE\n");
-            atomic_store(&DEMANDEETAT,DEPPASSEMENT);
+            atomic_store(&DEMANDEETAT,DEMANDEDEPPASSEMENT);
             }
-        if (local_port=6001){
+        if (local_port==6001){
             printf("OBJECTIF SUIVANT RECU\n");
-            pthread_mutex_lock(&MUTEX_NEXTOBJECTIF)
+            pthread_mutex_lock(&MUTEX_NEXTOBJECTIF);
             sscanf(buff, "%d %d",&(NEXTOBJECTIF.x),&(NEXTOBJECTIF.y));
             pthread_mutex_unlock(&MUTEX_NEXTOBJECTIF);
             }
         if (local_port==6002){//gestion de la commande stop
             printf("ARRET DU SYSTEME\n");
             send_command(FD,0,0);//si on reçoit un message du thread stop on arréte les moteurs
-            atomic_store(terminateProgram,true);//et on arréte les programmes
+            atomic_store(&terminateProgram,true);//et on arréte les programmes
             }
 
     
@@ -538,42 +472,17 @@ void receptionposition()
     
         
 }
-void advance(int distance, int8_t RPM){
-    float vitesse= RPM*rayon_roue/60;//conversion de RPM en vitesse en mm/s
-    int time= (int)(1000000*distance/vitesse);
-    send_command(FD,RPM,RPM);
-    usleep(time);
-    send_command(FD,0,0);//on arréte les moteurs aprés avoir travérsé la distance
-}
 
-void turn(int theta, int8_t RPM){
-    float vitesse= RPM*rayon_roue/60;//conversion de RPM en vitesse en mm/s
-    float omega= 2*vitesse/largeur_voiture;//vitesse angulaire de la voiture en rad/s
-    float thetarad =theta*3.14/180;//conversion de l'angle en degrés en radians
-    int time =(int)(100000*theta/omega);
-    send_command(FD,RPM,-RPM);
-    usleep(time);
-    send_command(FD,0,0);
-}
-
-void CtrlHandler(int signum)
-{
-    terminateProgram=true;
-}
 
 void gotopoint(void *arg){
-    int xd =arg[0];
-    int yd = arg[1];
-    pthread_lock(&MUTEX_POSITION);
+    int *pos= (int *)arg;
+    int xd =pos[0];
+    int yd = pos[1];
+    pthread_mutex_lock(&MUTEX_POSITION);
     int xv = POSITION.x;
     int yv = POSITION.y;
-    pthread_unlock(&MUTEX_POSITION);
-    int phi1=(int)atan2(abs(xd-xv),abs(yd-yv));
-     phi2= 18
-
+    pthread_mutex_unlock(&MUTEX_POSITION);
+    int phi=(int)atan2(abs(xd-xv),abs(yd-yv))+180-atomic_load(&ANGLE);
 
 }
 
-void stopcommand(){
-    send_command(FD,0,0);
-}

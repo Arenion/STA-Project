@@ -20,6 +20,7 @@
 #include <time.h>
 #include <signal.h>
 
+#include "Statemachine/statemachine.h"
 
 // Octets du protocole
 #define START_BYTE -128 
@@ -75,8 +76,8 @@ struct nextobjectif{
 };
 
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]);//focntion transformant le ratio et le rpm en vitesse mot gauche et droite
-void lecturedonneescamera(char pseudofich[MAX_CARS]);//connexion de socket de la caméra pour lire données: caméra -> voiture
-void envoidedonne(char doneecam[MAX_CARS-1]);//fonction intérprétant les données et les envoie à l'arduino, c'est ici qu'on interprete dans quel mode on se trouve: voiture -> raspberry 
+void *lecturedonneescamera(void *arg);//connexion de socket de la caméra pour lire données: caméra -> voiture
+void *envoidedonne(void *arg);//fonction intérprétant les données et les envoie à l'arduino, c'est ici qu'on interprete dans quel mode on se trouve: voiture -> raspberry 
 void receptioncontrolleur(struct arg_socket * arg);// fonction permettant de recevoir des données du controlleur: controlleur -> voiture
 void envoicontrolleur(struct arg_socket * arg);//fonction envoyant des données 
 void receptionposition();//fonction permettant de recevoir la postion via le marvelmind
@@ -237,7 +238,8 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void lecturedonneescamera(char *pseudofich){
+void *lecturedonneescamera(void *arg){
+    char *pseudofich = (char *)arg;
     int sd_lect;// socked de dialogue du lecteur
     struct sockaddr_un addr_lect,addr_ecriv;//Pour definir l'adresse du lecteur et recupérer l'adresse de l'émetteur
     int lg_addr; //pour spécifier la longueur en octet d'une adresse
@@ -285,7 +287,7 @@ void lecturedonneescamera(char *pseudofich){
     //Etape 5: Fermeture du programme
     close (sd_lect);//fermeture de la socket
     unlink(addr_lect.sun_path); //supression du pseudo fichier créé sur le disque dur
-    return;
+    return NULL;
 }
 
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]){
@@ -301,7 +303,8 @@ void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]){
 
 }
 
-void envoidedonne(char doneecam[MAX_CARS-1]){
+void *envoidedonne(void *arg){
+    char * doneecam = (char *)arg;
     DEMANDEETAT=DEMANDEORMAL;
 
     while (1){
@@ -469,7 +472,7 @@ void receptioncontrolleur(struct arg_socket * arg)
             }
         if (local_port=6001){
             printf("OBJECTIF SUIVANT RECU\n");
-            sscanf("%d %d",&(NEXTOBJECTIF.x),&(NEXTOBJECTIF.y));
+            sscanf(buff, "%d %d",&(NEXTOBJECTIF.x),&(NEXTOBJECTIF.y));
             }
         if (local_port==6002){//gestion de la commande stop
             printf("ARRET DU SYSTEME\n");

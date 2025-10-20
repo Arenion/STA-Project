@@ -66,11 +66,12 @@ struct infoarduino{
     int RPM;
 };
 struct position{
-    int32_t x;
-    int32_t y;
+    int32_t x; // mm
+    int32_t y; // mm
 };
 
-#define OBJECTIF_STOP ((struct position){-1, -1})
+#define POINT_STOP ((struct position){-1, -1})
+#define OBJECTIF_STOP POINT_STOP
 
 extern struct infoarduino INFORMATIONARDUINO;
 extern pthread_mutex_t MUTEX_INFORMATIONARDUINO;

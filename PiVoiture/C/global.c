@@ -76,6 +76,8 @@ pthread_mutex_t MUTEX_INFORMATIONARDUINO;
 struct position NEXTOBJECTIF;
 pthread_mutex_t MUTEX_NEXTOBJECTIF;
 
+#define OBJECTIF_STOP ((struct position){-1, -1})
+
 struct position POSITION;//position actuelle de la voiture
 pthread_mutex_t MUTEX_POSITION;
 

@@ -267,10 +267,10 @@ void lecturedonneescamera(char *pseudofich){
             printf("Infos caméra reçues: ");
             printf(INFOCAMERA);
             sscanf(INFOCAMERA,"%f %s %s %s",&ratio,vitesse,obstacle,panneau);
-	    printf(" ratio %f\n",ratio);
-	    printf("vitesse %s\n",vitesse);
+	        printf(" ratio %f\n",ratio);
+	        printf("vitesse %s\n",vitesse);
             INFORMATIONARDUINO.ratio=ratio;
-	    INFORMATIONARDUINO.RPM=LENT;
+	        INFORMATIONARDUINO.RPM=LENT;
             //if (strcmp(vitesse,"LENT")) INFORMATIONARDUINO.RPM=LENT;
             //if (strcmp(vitesse,"RAPIDE"))INFORMATIONARDUINO.RPM=RAPIDE;
             //if (strcmp(vitesse,"STOP"))INFORMATIONARDUINO.RPM=0;       
@@ -313,6 +313,17 @@ void envoidedonne(char doneecam[MAX_CARS-1]){
         ratRPMtovitmot(INFORMATIONARDUINO.ratio,INFORMATIONARDUINO.RPM,vitessemot);
         send_command(FD,vitessemot[0],vitessemot[1]);
        }
+    if(ETAT=DEPPASSEMENT){
+        turn(-45,INFORMATIONARDUINO.RPM);
+        advance(1.4*200,INFORMATIONARDUINO.RPM);
+        turn(45,INFORMATIONARDUINO.RPM);
+        advance(100,INFORMATIONARDUINO.RPM);
+        turn(45,INFORMATIONARDUINO.RPM);
+        advance(1.4*200,INFORMATIONARDUINO.RPM);
+        turn(-45,INFORMATIONARDUINO.RPM);
+
+
+    }
         //if(ETAT=STOP){
         //    send_command(FD,0,0);
        // }
@@ -462,7 +473,8 @@ void receptioncontrolleur(struct arg_socket * arg)
             sscanf("%d %d",&(NEXTOBJECTIF.x),&(NEXTOBJECTIF.y));
             }
         if (local_port==6002){//gestion de la commande stop
-            printf("ARRET DU SYSTEME\n");
+            prin        advance(100,INFORMATIONARDUINO.RPM);
+tf("ARRET DU SYSTEME\n");
             send_command(FD,0,0);//si on reçoit un message du thread stop on arréte les moteurs
             terminateProgram=true;//et on arréte les programmes
             }
@@ -587,7 +599,8 @@ void advance(int distance, int8_t RPM){
 
 void turn(int theta, int8_t RPM){
     float vitesse= RPM*rayon_roue/60;//conversion de RPM en vitesse en mm/s
-    float omega= 2*vitesse/largeur_voiture;//vitesse angulaire de la voiture
+    float omega= 2*vitesse/largeur_voiture;//vitesse angulaire de la voiture en rad/s
+    float thetarad =theta*3.14/180;//conversion de l'angle en degrés en radians
     int time =(int)(100000*theta/omega);
     send_command(FD,RPM,-RPM);
     usleep(time);

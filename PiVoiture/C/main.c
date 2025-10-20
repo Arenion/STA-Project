@@ -14,7 +14,6 @@ void receptioncontrolleur(struct arg_socket * arg);// fonction permettant de rec
 void envoicontrolleur(struct arg_socket * arg);//fonction envoyant des données 
 void receptionposition();//fonction permettant de recevoir la postion via le marvelmind
 // les deux codes précédent sont à utiliser dans deux situations: trajectoire suivant des points, et peut-être le dépassement 
-void CtrlHandler(int signum);
 void gestionfinprogramme();
 
 
@@ -73,14 +72,6 @@ int serial_open(const char *portname, int baudrate) {
     return fd;
 }
 
-// Envoi d’une commande au MegaPi
-void send_command(int fd, int8_t rpmg, int8_t rpmd) {
-    int8_t frame[3] = {-128, rpmg,rpmd };
-    write(fd, frame, 3);
-    tcdrain(fd);
-    printf("Commande envoyée : %d %d\n", rpmg,rpmd);
-}
-
 
 int main(int argc, char *argv[]) {
     //initialisation des threads
@@ -131,9 +122,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     printf("Ouverture de %s à %d bauds réussie.\n", port, baud_raw);
-    
-    //signal (SIGINT, CtrlHandler);
-    signal (SIGQUIT, CtrlHandler);
 
     //pthread_create(&thread_stop,NULL,receptioncontrolleur,(void*)&demandestop);
     pthread_create(&thread_socketcamera,NULL,lecturedonneescamera,PSEUDOFICHIER);

@@ -1,12 +1,11 @@
-#include "global.c"
+#include "global.h"
+
+#include "communicationarduino.h"
 
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]);//focntion transformant le ratio et le rpm en vitesse mot gauche et droite
 void advance(int dist,int8_t RPM);//fonction avancer la voiture d'une distance dist en mm pour une rotation des moteurs de RPM
 void turn(int theta, int8_t RPM);//fonction pour tourner d'un angle theta dans le sens des aiguilles d'une montre pour une rotation des moteurs de RPMs
-void stopcommand();
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]);
-void *lignedroite(void *arg);
-void send_command(int fd, int8_t rpmg, int8_t rpmd);
 
 
 
@@ -16,6 +15,7 @@ void send_command(int fd, int8_t rpmg, int8_t rpmd) {
     tcdrain(fd);
     printf("Commande envoyée : %d %d\n", rpmg,rpmd);
 }
+
 void stopcommand(){
     send_command(FD,0,0);
 }

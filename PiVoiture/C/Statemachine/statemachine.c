@@ -5,7 +5,7 @@
 #include "navigation.h"
 #include "../communicationarduino.h"
 
-#include "../global.c"
+#include "../global.h"
 
 enum states {
     PAUSE,

@@ -1,10 +1,22 @@
-// Octets du protocole
-#include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
-#include <pthread.h>
+#include <stdlib.h>
 #include <unistd.h>
-
-
+#include <fcntl.h>
+#include <termios.h>
+#include <sys/un.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <pthread.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include "marvelmind.c/src/marvelmind.h"
+#include <sys/wait.h>
+#include <time.h>
+#include <signal.h>
+#include <stdatomic.h>
+#include <math.h>
 
 #define START_BYTE -128 
 

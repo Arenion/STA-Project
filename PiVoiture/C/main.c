@@ -309,20 +309,20 @@ void envoidedonne(char doneecam[MAX_CARS-1]){
     //if(ETAT=NORMAL){
 	printf("etat normal");
 	printf("%f, %d\n",INFORMATIONARDUINO.ratio,INFORMATIONARDUINO.RPM);
-        ratRPMtovitmot(INFORMATIONARDUINO.ratio,INFORMATIONARDUINO.RPM,vitessemot);
-        send_command(FD,vitessemot[0],vitessemot[1]);
+    ratRPMtovitmot(INFORMATIONARDUINO.ratio,INFORMATIONARDUINO.RPM,vitessemot);
+    send_command(FD,vitessemot[0],vitessemot[1]);
     //   }
-    if(ETAT=DEPPASSEMENT){
-        turn(-45,INFORMATIONARDUINO.RPM);
-        advance(1.4*200,INFORMATIONARDUINO.RPM);
-        turn(45,INFORMATIONARDUINO.RPM);
-        advance(100,INFORMATIONARDUINO.RPM);
-        turn(45,INFORMATIONARDUINO.RPM);
-        advance(1.4*200,INFORMATIONARDUINO.RPM);
-        turn(-45,INFORMATIONARDUINO.RPM);
+    // if(ETAT=DEPPASSEMENT){
+    //     turn(-45,INFORMATIONARDUINO.RPM);
+    //     advance(1.4*200,INFORMATIONARDUINO.RPM);
+    //     turn(45,INFORMATIONARDUINO.RPM);
+    //     advance(100,INFORMATIONARDUINO.RPM);
+    //     turn(45,INFORMATIONARDUINO.RPM);
+    //     advance(1.4*200,INFORMATIONARDUINO.RPM);
+    //     turn(-45,INFORMATIONARDUINO.RPM);
 
 
-    }
+    // }
         //if(ETAT=STOP){
         //    send_command(FD,0,0);
        // }

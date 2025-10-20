@@ -9,7 +9,6 @@
 #include "communicationarduino.h"
 
 void *lecturedonneescamera(void *arg);//connexion de socket de la caméra pour lire données: caméra -> voiture
-void *lignedroite(void *arg);//fonction intérprétant les données et les envoie à l'arduino, c'est ici qu'on interprete dans quel mode on se trouve: voiture -> raspberry 
 void receptioncontrolleur(struct arg_socket * arg);// fonction permettant de recevoir des données du controlleur: controlleur -> voiture
 void envoicontrolleur(struct arg_socket * arg);//fonction envoyant des données 
 void receptionposition();//fonction permettant de recevoir la postion via le marvelmind
@@ -457,18 +456,5 @@ void receptionposition()
  close(se); // Ne sert a rien car je n'arrive jamais ici !!!
     
         
-}
-
-
-void gotopoint(void *arg){
-    int *pos= (int *)arg;
-    int xd =pos[0];
-    int yd = pos[1];
-    pthread_mutex_lock(&MUTEX_POSITION);
-    int xv = POSITION.x;
-    int yv = POSITION.y;
-    pthread_mutex_unlock(&MUTEX_POSITION);
-    int phi=(int)atan2(abs(xd-xv),abs(yd-yv))+180-atomic_load(&ANGLE);
-
 }
 

@@ -82,3 +82,22 @@ void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]){
     };
 
 }
+
+void gotopoint(void *arg){
+    int *pos= (int *)arg;
+    int xd =pos[0];
+    int yd = pos[1];
+    pthread_mutex_lock(&MUTEX_POSITION);
+    int xv = POSITION.x;
+    int yv = POSITION.y;
+    pthread_mutex_unlock(&MUTEX_POSITION);
+    int phi=(int)atan2(abs(xd-xv),abs(yd-yv))+180-atomic_load(&ANGLE);
+    pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
+    int RPM=INFORMATIONARDUINO.RPM;
+    pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
+    turn(phi,RPM);
+    advance(sqrt((xd-xv)*(xd-xv)+(yd-yv)*(yd-yv)),RPM);
+
+}
+
+

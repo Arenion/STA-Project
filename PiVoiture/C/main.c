@@ -16,8 +16,6 @@ void receptionposition();//fonction permettant de recevoir la postion via le mar
 // les deux codes précédent sont à utiliser dans deux situations: trajectoire suivant des points, et peut-être le dépassement 
 void CtrlHandler(int signum);
 void gestionfinprogramme();
-void gotopoint(void *arg);
-void stopcommand(void * arg);
 
 
 

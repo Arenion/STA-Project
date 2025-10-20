@@ -292,10 +292,10 @@ void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]){
     float erreur=ratio-0.5;
     if (erreur>=0){
         vitessemot[0]=(int8_t)RPM;
-        vitessemot[1]=(int8_t)(RPM*(1-4*erreur));
+        vitessemot[1]=(int8_t)(RPM*(1-3*erreur));
     };
     if(erreur<0){
-        vitessemot[0]=(int8_t)(RPM*(1+4*erreur));
+        vitessemot[0]=(int8_t)(RPM*(1+3*erreur));
         vitessemot[1]=(int8_t)(RPM);
     };
 

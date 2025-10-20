@@ -1,7 +1,7 @@
 all :
 	gcc main.c -o teleop.e
 	rm -rf /tmp/cam.sock
-	./teleop.e /dev/ttAMA0 9600
+	./teleop.e /dev/ttyAMA0 9600
 	
 
 clean :

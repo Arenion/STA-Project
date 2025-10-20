@@ -220,7 +220,7 @@ int main(int argc, char *argv[]) {
     //signal (SIGINT, CtrlHandler);
     signal (SIGQUIT, CtrlHandler);
 
-    pthread_create(&thread_stop,NULL,receptioncontrolleur,(void*)&demandestop);
+    //pthread_create(&thread_stop,NULL,receptioncontrolleur,(void*)&demandestop);
     pthread_create(&thread_socketcamera,NULL,lecturedonneescamera,PSEUDOFICHIER);
     pthread_create(&thread_sendcommandarduino,NULL,envoidedonne,NULL);
     //pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void*)&autorisationdepassement);
@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
     //pthread_create(&thread_actuatlisationtronçon,NULL,envoicontrolleur,(void*)&actualisationtronçon);
     //pthread_create(&thread_getposition,NULL,receptionposition,NULL);
     
-    pthread_join(thread_stop,NULL);
+   //pthread_join(thread_stop,NULL);
     pthread_join(thread_sendcommandarduino,NULL);
     pthread_join(thread_socketcamera,NULL);
     close(FD);

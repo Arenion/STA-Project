@@ -93,7 +93,7 @@ char INFOCAMERA[MAX_CARS-1];//données de la caméra, via une af_unix
 int FD;
 char donneecontroleur[MAX_CARS-1];//donnée du controleur, via une socket af_inet
 enum demandeetat DEMANDEETAT=DEMANDEINIT;//état de la voiture
-enum etat ETAT=INIT;
+enum etat ETAT=NORMAL;
 int32_t position[2];//position actuelle de la voiture
 bool terminateProgram=false;
 char vitesse[MAX_CARS-1];
@@ -460,7 +460,7 @@ void receptioncontrolleur(struct arg_socket * arg)
     //(recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen);
 
     nbcars=recv(sd1, buff,MAX_CARS, 0) ; // Les deux NULL a la fin indique que je ne veux pas recuperer l'adresse de l'ecrivain
-    
+
     if (nbcars){
         
         strcpy(arg->message,buff);
@@ -473,8 +473,7 @@ void receptioncontrolleur(struct arg_socket * arg)
             sscanf("%d %d",&(NEXTOBJECTIF.x),&(NEXTOBJECTIF.y));
             }
         if (local_port==6002){//gestion de la commande stop
-            prin        advance(100,INFORMATIONARDUINO.RPM);
-tf("ARRET DU SYSTEME\n");
+            printf("ARRET DU SYSTEME\n");
             send_command(FD,0,0);//si on reçoit un message du thread stop on arréte les moteurs
             terminateProgram=true;//et on arréte les programmes
             }

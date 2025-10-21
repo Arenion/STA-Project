@@ -1,12 +1,12 @@
-#include "global.h"
+#include "global.c"
 
 #include "communicationarduino.h"
 
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]);//focntion transformant le ratio et le rpm en vitesse mot gauche et droite
 void advance(int dist,int8_t RPM);//fonction avancer la voiture d'une distance dist en mm pour une rotation des moteurs de RPM
-void turn(int theta, int8_t RPM);//fonction pour tourner d'un angle theta dans le sens des aiguilles d'une montre pour une rotation des moteurs de RPMs
+void initturn(int theta, int8_t RPM, int * timetoturn);//fonction pour tourner d'un angle theta dans le sens des aiguilles d'une montre pour une rotation des moteurs de RPMs
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]);
-
+long initgothrougharc(double longueur_arc, int diffang, int RPM);
 
 
 void send_command(int fd, int8_t rpmg, int8_t rpmd) {
@@ -27,15 +27,15 @@ void advance(int distance, int8_t RPM){
     send_command(FD,0,0);//on arréte les moteurs aprés avoir travérsé la distance
 }
 
-void turn(int theta, int8_t RPM){
+void initturn(int theta, int8_t RPM, int * timetoturn){
     float vitesse= RPM*rayon_roue/60;//conversion de RPM en vitesse en mm/s
     float omega= 2*vitesse/largeur_voiture;//vitesse angulaire de la voiture en rad/s
     float thetarad =theta*3.14/180;//conversion de l'angle en degrés en radians
-    int time =(int)(100000*theta/omega);
+    *timetoturn =(int)(100000*theta/omega);
     send_command(FD,RPM,-RPM);
-    usleep(time);
-    send_command(FD,0,0);
-}
+//     usleep(time);
+//     send_command(FD,0,0);
+ }
 void *lignedroite(void *arg){
     char * doneecam = (char *)arg;
     DEMANDEETAT=DEMANDEORMAL;
@@ -87,17 +87,41 @@ void gotopoint(void *arg){
     int *pos= (int *)arg;
     int xd =pos[0];
     int yd = pos[1];
-    pthread_mutex_lock(&MUTEX_POSITION);
-    int xv = POSITION.x;
-    int yv = POSITION.y;
-    pthread_mutex_unlock(&MUTEX_POSITION);
-    int phi=(int)atan2(abs(xd-xv),abs(yd-yv))+180-atomic_load(&ANGLE);
-    pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
-    int RPM=INFORMATIONARDUINO.RPM;
-    pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
-    turn(phi,RPM);
-    advance(sqrt((xd-xv)*(xd-xv)+(yd-yv)*(yd-yv)),RPM);
+    int i=1;
+   
+    switch (ETATGOTOPOINT)
+    {
+    case  GOTOPOINT_INIT:
+         pthread_mutex_lock(&MUTEX_POSITION);
+        int xv = POSITION.x;
+        int yv = POSITION.y;
+        pthread_mutex_unlock(&MUTEX_POSITION);
+        int phi=(int)atan2(abs(xd-xv),abs(yd-yv))+180-atomic_load(&ANGLE);
+        pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
+        int RPM=INFORMATIONARDUINO.RPM;
+        pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
+        tempsavancer =initgothrougharc(sqrt((xv-xd)*(xv-xd)+(yv-yd)*(yv-yd)), phi,RPM);//il faut changer la fonction calculant la distance 
+        tempsdebutavancer = (long)time(NULL);
+        ETATGOTOPOINT=GOTOPOINT_DURING;
+        break;
+    
+    case GOTOPOINT_DURING:
+        if ((long)time(NULL)>tempsavancer+tempsdebutavancer+tempsobstacle){
+            i++;
+            tempsavancer=0;
+            tempsobstacle=0;
+        }
+        break;
+    }
+    //turn(phi,RPM);
+    //advance(sqrt((xd-xv)*(xd-xv)+(yd-yv)*(yd-yv)),RPM);
 
 }
 
-
+long initgothrougharc(double longueur_arc, int diffang, int RPM){
+    float vitesse= RPM*rayon_roue/60;//conversion de RPM en vitesse en mm/s
+    long time=(long) longueur_arc/vitesse;
+    float omega=diffang/time;
+    send_command(FD,(int8_t)(60/rayon_roue)*(vitesse+largeur_voiture*omega),(int8_t)(60/rayon_roue)*(vitesse-largeur_voiture*omega));
+    return time;
+}

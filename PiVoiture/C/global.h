@@ -17,6 +17,7 @@
 #include <signal.h>
 #include <stdatomic.h>
 #include <math.h>
+#include <time.h>
 
 #define START_BYTE -128 
 
@@ -56,6 +57,11 @@ enum etat{
     STOP,
     DEPPASSEMENT,
 };
+
+static enum {
+    GOTOPOINT_INIT,
+    GOTOPOINT_DURING,
+} ETATGOTOPOINT=GOTOPOINT_INIT;
 
 struct arg_socket{
     int Port;

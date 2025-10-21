@@ -10,7 +10,7 @@
 
 void *lecturedonneescamera(void *arg);//connexion de socket de la caméra pour lire données: caméra -> voiture
 void receptioncontrolleur(struct arg_socket * arg);// fonction permettant de recevoir des données du controlleur: controlleur -> voiture
-void envoicontrolleur(struct arg_socket * arg);//fonction envoyant des données 
+int startenvoicontrolleur(struct arg_socket * arg);//fonction envoyant des données 
 void receptionposition();//fonction permettant de recevoir la postion via le marvelmind
 // les deux codes précédent sont à utiliser dans deux situations: trajectoire suivant des points, et peut-être le dépassement 
 void gestionfinprogramme();
@@ -122,6 +122,8 @@ int main(int argc, char *argv[]) {
     }
     printf("Ouverture de %s à %d bauds réussie.\n", port, baud_raw);
 
+    sddemandedereservation =startenvoicontrolleur(&demandereservation);
+    sdobjectifsuivant=startenvoicontrolleur(&objectifsuivant);
     //pthread_create(&thread_stop,NULL,receptioncontrolleur,(void*)&demandestop);
     pthread_create(&thread_socketcamera,NULL,lecturedonneescamera,PSEUDOFICHIER);
     pthread_create(&thread_sendcommandarduino,NULL,lignedroite,NULL);
@@ -136,6 +138,8 @@ int main(int argc, char *argv[]) {
     pthread_join(thread_sendcommandarduino,NULL);
     pthread_join(thread_socketcamera,NULL);
     close(FD);
+    close(sddemandedereservation);
+    close(sdobjectifsuivant);
     return 0;
 }
 
@@ -195,7 +199,7 @@ void *lecturedonneescamera(void *arg){
 
 
 
-void envoicontrolleur(struct arg_socket * arg)
+int startenvoicontrolleur(struct arg_socket * arg)
 {
     int remote_port =arg->Port;
     int sd1 ; //socket de dialogue
@@ -228,25 +232,39 @@ void envoicontrolleur(struct arg_socket * arg)
     CHECK_ERROR(erreur,-1, "La connexion n'a pas ete ouverte !!! \n");
 
     // Etape 4 : dialogue unidirectionnel vers le serveur
-    do
-    {
+    // do
+    // {
+    //     if (remote_port==6000){
+    //         pthread_mutex_lock(&MUTEX_RESERVATION);
+    //         if (RESERVATION==RESERVATIONRONDPOINT){
+    //             send(sd1,"1",1,0);
+    //         }
+    //         else{
+    //             send(sd1,"0",0,0);
+    //         }
+    //     }
+    //     if (remote_port==6001){
+    //         pthread_mutex_lock(&MUTEX_REUSSITEOBJECTIF);
+    //         send(sd1,"1",1,0);
+
+    //     }
     
     
     //Etape 4 : Envoi de data
         
-    strcmp(buff,arg->message);
+    // strcmp(buff,arg->message);
     
-    nbcars=send(sd1, buff, strlen(buff)+1, 0); 
-    }
-    while (strcmp(buff, "fin")!=0 ||(terminateProgram));
+    // nbcars=send(sd1, buff, strlen(buff)+1, 0); 
+    // }
+    // while (strcmp(buff, "fin")!=0 ||(terminateProgram));
     
     
-    getchar();
+    // getchar();
    
-    close(sd1);
+    // close(sd1);
     
       
-    return;
+    return sd1;
     
 }
 

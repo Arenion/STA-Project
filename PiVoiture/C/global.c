@@ -9,6 +9,11 @@ pthread_mutex_t MUTEX_NEXTOBJECTIF;
 struct position POSITION;//position actuelle de la voiture
 pthread_mutex_t MUTEX_POSITION;
 
+enum reservation RESERVATION;
+pthread_mutex_t MUTEX_RESERVATION;
+
+pthread_mutex_t MUTEX_REUSSITEOBJECTIF;
+
 char INFOCAMERA[MAX_CARS-1];//données de la caméra, via une af_unix
 int FD;
 char donneecontroleur[MAX_CARS-1];//donnée du controleur, via une socket af_inet
@@ -26,3 +31,24 @@ long tempsavancer;//temps pour avancer d'une certaine longueur
 long tempsdebutavancer;//temps de début d'avancé en ligne droite
 int RPM;
 int ANGLE;//Angle de la voiture, issu de l'arduino
+int sdobjectifsuivant; //socket de demande de l'objectif suivant
+int sddemandedereservation;//socket de la demande de la demande de reservation
+
+void demandereservation(enum reservation areserver){
+    switch (areserver)
+    {
+    case RESERVATIONRONDPOINT:
+        send(sddemandedereservation,"1",1,0);
+        break;
+    case RESERVATPONT:
+        send(sddemandedereservation,"2",1,0);
+    case PASDERESERVATION:
+        send(sddemandedereservation,"0",1,0);    
+    default:
+        break;
+    }
+}
+
+void annoncereussiteobjectif(){
+    send(sdobjectifsuivant,"1",0,0);
+}

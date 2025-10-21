@@ -64,6 +64,12 @@ static enum {
     GOTOPOINT_DURING,
 } ETATGOTOPOINT=GOTOPOINT_INIT;
 
+enum reservation{
+    RESERVATIONRONDPOINT,
+    RESERVATPONT,
+    PASDERESERVATION,
+};
+
 struct arg_socket{
     int Port;
     char message[MAX_CARS];

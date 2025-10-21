@@ -21,6 +21,7 @@ int point_vertices_side(struct position p1, struct position p2, struct position 
 // Ne fonctionne qu'avec des formes convexes !
 bool point_inside_polygon(struct position point, struct polygon poly);
 
+float point_segment_distance2(struct position p1, struct position p2, struct position point);
 float point_line_distance2(struct line line, struct position point, struct position return_segment[2]);
 
 struct map_node; // Forward declaration
@@ -46,3 +47,4 @@ struct map_node
 extern struct map_node_list MAP;
 
 struct map_node *closest_map_node(struct position point);
+

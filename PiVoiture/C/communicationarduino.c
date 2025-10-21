@@ -1,6 +1,6 @@
-#include "global.c"
-
+#include "global.h"
 #include "communicationarduino.h"
+#include "Statemachine/map.h"
 
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]);//focntion transformant le ratio et le rpm en vitesse mot gauche et droite
 void advance(int dist,int8_t RPM);//fonction avancer la voiture d'une distance dist en mm pour une rotation des moteurs de RPM
@@ -83,36 +83,59 @@ void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]){
 
 }
 
-void gotopoint(void *arg){
-    int *pos= (int *)arg;
-    int xd =pos[0];
-    int yd = pos[1];
-    int i=1;
-   
-    switch (ETATGOTOPOINT)
-    {
-    case  GOTOPOINT_INIT:
-         pthread_mutex_lock(&MUTEX_POSITION);
-        int xv = POSITION.x;
-        int yv = POSITION.y;
-        pthread_mutex_unlock(&MUTEX_POSITION);
-        int phi=(int)atan2(abs(xd-xv),abs(yd-yv))+180-atomic_load(&ANGLE);
-        pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
-        int RPM=INFORMATIONARDUINO.RPM;
-        pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
-        tempsavancer =initgothrougharc(sqrt((xv-xd)*(xv-xd)+(yv-yd)*(yv-yd)), phi,RPM);//il faut changer la fonction calculant la distance 
-        tempsdebutavancer = (long)time(NULL);
-        ETATGOTOPOINT=GOTOPOINT_DURING;
-        break;
+float calculratiosuivitraj(struct position debutsegment,struct position finsegment,struct position voiture){ // fonction calculant l'erreur(le ratio) de la trajectoire de la position de la  voiture par rapport àu segment souhaité
+    int xv = voiture.x;
+    int yv = voiture.y;
+    int xd= debutsegment.x;
+    int yd= debutsegment.y;
+    int xf=finsegment.x;
+    int yf=finsegment.y;
+    int vecx= yf-yd;
+    int vecy= xd-xf;
+    int scal = (vecx*(xv-xd)+vecy*(yv-yd));
+    float ratio = 0.5+(scal/abs(scal))*point_segment_distance2(debutsegment,finsegment,voiture)/205;
+    return ratio;
+
+}
+
+bool followtraj(void *arg){
+    struct position segment[2];
+    int8_t vitessemot[2];
+    pthread_mutex_lock(&MUTEX_POSITION);
+    int xv = POSITION.x;
+    int yv = POSITION.y;
+    pthread_mutex_unlock(&MUTEX_POSITION);
+    struct position voiture={xv,yv};
+    struct line LINE =*(struct line *)arg;
+    point_line_distance2(LINE, voiture, segment);
+    float ratio=calculratiosuivitraj(segment[0],segment[1],voiture);
+    pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
+    int RPM= INFORMATIONARDUINO.RPM;
+    pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
+    ratRPMtovitmot(ratio,RPM,vitessemot);
+    send_command(FD,vitessemot[0],vitessemot[1]);
+
+    // switch (ETATGOTOPOINT)
+    // {
+    // case  GOTOPOINT_INIT:
+        
+    //     int phi=(int)atan2(abs(xd-xv),abs(yd-yv))+180-atomic_load(&ANGLE);
+    //     pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
+    //     int RPM=INFORMATIONARDUINO.RPM;
+    //     pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
+    //     tempsavancer =initgothrougharc(sqrt((xv-xd)*(xv-xd)+(yv-yd)*(yv-yd)), phi,RPM);//il faut changer la fonction calculant la distance 
+    //     tempsdebutavancer = (long)time(NULL);
+    //     ETATGOTOPOINT=GOTOPOINT_DURING;
+    //     break;
     
-    case GOTOPOINT_DURING:
-        if ((long)time(NULL)>tempsavancer+tempsdebutavancer+tempsobstacle){
-            i++;
-            tempsavancer=0;
-            tempsobstacle=0;
-        }
-        break;
-    }
+    // case GOTOPOINT_DURING:
+    //     if ((long)time(NULL)>tempsavancer+tempsdebutavancer+tempsobstacle){
+    //         i++;
+    //         tempsavancer=0;
+    //         tempsobstacle=0;
+    //     }
+    //     break;
+    // }
     //turn(phi,RPM);
     //advance(sqrt((xd-xv)*(xd-xv)+(yd-yv)*(yd-yv)),RPM);
 

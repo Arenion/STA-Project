@@ -9,9 +9,9 @@
 #include "communicationarduino.h"
 
 void *lecturedonneescamera(void *arg);//connexion de socket de la caméra pour lire données: caméra -> voiture
-void receptioncontrolleur(struct arg_socket * arg);// fonction permettant de recevoir des données du controlleur: controlleur -> voiture
+void *receptioncontrolleur(void * argu);// fonction permettant de recevoir des données du controlleur: controlleur -> voiture
 int startenvoicontrolleur(struct arg_socket * arg);//fonction envoyant des données 
-void receptionposition();//fonction permettant de recevoir la postion via le marvelmind
+void *receptionposition(void * arg);//fonction permettant de recevoir la postion via le marvelmind
 // les deux codes précédent sont à utiliser dans deux situations: trajectoire suivant des points, et peut-être le dépassement 
 void gestionfinprogramme();
 
@@ -76,14 +76,13 @@ int main(int argc, char *argv[]) {
     //initialisation des threads
     pthread_t thread_autorisationdepassement;// thread pour l'autorisation de depassement controlleur -> voiture
     pthread_t thread_objectifsuivant;// thread pour l'envoi d'un nouvel objectif controlleur -> voiture
-    pthread_t thread_demandereservation;// thread pour la demande de reservation d'une section voiture -> controlleur
-    pthread_t thrad_reussiteobjectif; // thread annonçant la réussite du dernier objectif voiture -> controlleur
+    // pthread_t thread_demandereservation;// thread pour la demande de reservation d'une section voiture -> controlleur
+    // pthread_t thrad_reussiteobjectif; // thread annonçant la réussite du dernier objectif voiture -> controlleur
     pthread_t thread_actuatlisationtronçon;// thread actualisant le tronçon de la voiture à l'aide d'informations de la caméra voiture -> contnrolleur
     pthread_t thread_socketcamera;
     pthread_t thread_sendcommandarduino;
     pthread_t thread_getposition;//thread permettant d'obtenir la position via le marvelmind
     pthread_t thread_stop; //thread gérant une commande stop du controlleur controlleur -> voiture 
-
 
     //initialisation des arguments des threads
     struct arg_socket autorisationdepassement={6000, 0};// pour le depassement on note 0 pour un refus et 1 pour une autorisation
@@ -126,17 +125,16 @@ int main(int argc, char *argv[]) {
     sdobjectifsuivant=startenvoicontrolleur(&objectifsuivant);
     //pthread_create(&thread_stop,NULL,receptioncontrolleur,(void*)&demandestop);
     pthread_create(&thread_socketcamera,NULL,lecturedonneescamera,PSEUDOFICHIER);
-    pthread_create(&thread_sendcommandarduino,NULL,lignedroite,NULL);
-    //pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void*)&autorisationdepassement);
-    //pthread_create(&thread_objectifsuivant,NULL,receptioncontrolleur,(void*)&objectifsuivant);
-    //pthread_create(&thread_demandereservation,NULL,envoicontrolleur,(void*)&demandereservation);
-    //pthread_create(&thrad_reussiteobjectif,NULL,envoicontrolleur,(void*)&reussiteobjectif);
-    //pthread_create(&thread_actuatlisationtronçon,NULL,envoicontrolleur,(void*)&actualisationtronçon);
-    //pthread_create(&thread_getposition,NULL,receptionposition,NULL);
-    
+    pthread_create(&thread_sendcommandarduino,NULL,navigationthread,NULL);
+    pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void*)&autorisationdepassement);
+    pthread_create(&thread_objectifsuivant,NULL,receptioncontrolleur,(void*)&objectifsuivant);
+    pthread_create(&thread_getposition,NULL,receptionposition,NULL);
    //pthread_join(thread_stop,NULL);
     pthread_join(thread_sendcommandarduino,NULL);
     pthread_join(thread_socketcamera,NULL);
+    pthread_join(thread_autorisationdepassement,NULL);
+    pthread_join(thread_objectifsuivant,NULL);
+    pthread_join(thread_getposition,NULL);
     close(FD);
     close(sddemandedereservation);
     close(sdobjectifsuivant);
@@ -230,39 +228,6 @@ int startenvoicontrolleur(struct arg_socket * arg)
     erreur=connect(sd1, (const struct sockaddr *) &adrlect, sizeof(adrlect));
     
     CHECK_ERROR(erreur,-1, "La connexion n'a pas ete ouverte !!! \n");
-
-    // Etape 4 : dialogue unidirectionnel vers le serveur
-    // do
-    // {
-    //     if (remote_port==6000){
-    //         pthread_mutex_lock(&MUTEX_RESERVATION);
-    //         if (RESERVATION==RESERVATIONRONDPOINT){
-    //             send(sd1,"1",1,0);
-    //         }
-    //         else{
-    //             send(sd1,"0",0,0);
-    //         }
-    //     }
-    //     if (remote_port==6001){
-    //         pthread_mutex_lock(&MUTEX_REUSSITEOBJECTIF);
-    //         send(sd1,"1",1,0);
-
-    //     }
-    
-    
-    //Etape 4 : Envoi de data
-        
-    // strcmp(buff,arg->message);
-    
-    // nbcars=send(sd1, buff, strlen(buff)+1, 0); 
-    // }
-    // while (strcmp(buff, "fin")!=0 ||(terminateProgram));
-    
-    
-    // getchar();
-   
-    // close(sd1);
-    
       
     return sd1;
     
@@ -270,8 +235,9 @@ int startenvoicontrolleur(struct arg_socket * arg)
 
 
 
-void receptioncontrolleur(struct arg_socket * arg)
+void *receptioncontrolleur(void * argu)
 {
+    struct arg_socket * arg=(struct arg_socket *)argu;
     int local_port =arg->Port;
     int se ; //socket d'ecoute
     int sd1 ; //socket de dialogue
@@ -373,7 +339,6 @@ void receptioncontrolleur(struct arg_socket * arg)
     // printf("Appuyez sur une touche pour quitter !!! \n");
     getchar();
     close(sd1);
-    return;
     }
 } // fin de la boucle accept du pere
     
@@ -384,7 +349,7 @@ void receptioncontrolleur(struct arg_socket * arg)
 }
 
 
-void receptionposition()
+void *receptionposition(void *arg)
 {
     int se ; //socket d'ecoute
     int sd1 ; //socket de dialogue
@@ -467,7 +432,6 @@ void receptionposition()
 
     printf("Fermeture de LECTEUR %d\n", nbfils);
     close(sd1);
-    return;
     }
 } // fin de la boucle accept du pere
     

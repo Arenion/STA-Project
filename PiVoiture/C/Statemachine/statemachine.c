@@ -88,3 +88,7 @@ void step_statemachine()
         break;
     }
 }
+
+void *navigationthread(void * arg){// fonction à appeler via pthread_create dans le main
+    while (!terminateProgram)step_statemachine();
+}

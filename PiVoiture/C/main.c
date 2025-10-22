@@ -453,6 +453,7 @@ void * envoideposition(void *arg){
         pthread_mutex_lock(&MUTEX_POSITION);
         char message[MAX_CARS];
         sprintf(message,"%d %d",postoenv.x,postoenv.y);
+        printf(message);
         send(sdenvoiposition,message,MAX_CARS,0);
 
     }
@@ -506,6 +507,7 @@ void* receptionposition(void *arg ) {
             // Envoi de la position au contrôleur
             if (valid_this_cycle) {
                 pthread_mutex_lock(&MUTEX_POSITION);
+                printf("X: %d  Y: %d", POSITION.x,POSITION.y);
                 POSITION.x = new_pos.x;
                 POSITION.y = new_pos.y;
                 pthread_mutex_unlock(&MUTEX_POSITION);

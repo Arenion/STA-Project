@@ -608,7 +608,7 @@ void *initialisation(void *argu)
 
     if (nbcars){
         
-        strcpy(arg->message,buff);
+        strcpy(arg.message,buff);
         if  (local_port==6000){//gestion des depassements
             printf("DEPASSEMENT AUTORISE\n");
             atomic_store(&DEMANDEETAT,DEMANDEDEPPASSEMENT);

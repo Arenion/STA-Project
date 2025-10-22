@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
     }
     printf("Ouverture de %s à %d bauds réussie.\n", port, baud_raw);
 
-    pthread_create(&thread_initialisation,NULL,initialisation,NULL);//on attend que le programme du controleur soit bien commencé, on fait ça avec un thread à part afin d'être
+    pthread_create(&thread_initialisation,NULL,(void*)initialisation,NULL);//on attend que le programme du controleur soit bien commencé, on fait ça avec un thread à part afin d'être
     pthread_join(thread_initialisation,NULL);
     
     sddemandedereservation =startenvoicontrolleur(&demandereservation);
@@ -531,7 +531,7 @@ void* receptionposition(void *arg ) {
     printf("Déconnexion du serveur.\n");
 }
 
-void *initialisation(void * argu)
+void *initialisation(void *argu)
 {   printf("test1\n");
     struct arg_socket * arg=(struct arg_socket *)argu;
     int local_port =arg->Port;

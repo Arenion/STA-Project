@@ -14,7 +14,7 @@ int startenvoicontrolleur(struct arg_socket * arg);//fonction envoyant des donn�
 void *receptionposition(void * arg);//fonction permettant de recevoir la postion via le marvelmind
 // les deux codes précédent sont à utiliser dans deux situations: trajectoire suivant des points, et peut-être le dépassement 
 void gestionfinprogramme();
-
+void *envoideposition(void * arg);
 
 
 // Fonction pour convertir un entier baudrate → valeur termios
@@ -133,6 +133,7 @@ int main(int argc, char *argv[]) {
     pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void*)&autorisationdepassement);
     pthread_create(&thread_objectifsuivant,NULL,receptioncontrolleur,(void*)&objectifsuivant);
     pthread_create(&thread_getposition,NULL,receptionposition,NULL);
+    pthread_create(&thread_envoiposition,NULL,envoideposition,NULL);
    //pthread_join(thread_stop,NULL);
     pthread_join(thread_sendcommandarduino,NULL);
     pthread_join(thread_socketcamera,NULL);
@@ -353,94 +354,172 @@ void *receptioncontrolleur(void * argu)
 }
 
 
-void *receptionposition(void *arg)
-{
-    int se ; //socket d'ecoute
-    int sd1 ; //socket de dialogue
+// void *receptionposition(void *arg)
+// {
+//     int se ; //socket d'ecoute
+//     int sd1 ; //socket de dialogue
     
-    int pid;
+//     int pid;
     
-    struct sockaddr_in adrlect , adrecriv ; //adresses dans le domaine AF_INET
+//     struct sockaddr_in adrlect , adrecriv ; //adresses dans le domaine AF_INET
     
-    int erreur; 
-    int size_rcvd; 
+//     int erreur; 
+//     int size_rcvd; 
     
-    struct PositionValue pos;
+//     struct PositionValue pos;
     
-    int nbfils=1;
+//     int nbfils=1;
     
-    //Etape 1 : creation de la socket
+//     //Etape 1 : creation de la socket
     
-    se=socket(AF_INET, SOCK_STREAM,0); // La socket va utilise TCP
+//     se=socket(AF_INET, SOCK_STREAM,0); // La socket va utilise TCP
     
-    printf("Descripteur de socket = %d \n", se); // Inutile
+//     printf("Descripteur de socket = %d \n", se); // Inutile
     
-    CHECK_ERROR(sd1,-1, "erreur de creation de la socket !\n");
+//     CHECK_ERROR(sd1,-1, "erreur de creation de la socket !\n");
     
-    // Etape 2  : On complete l'adresse de la socket
+//     // Etape 2  : On complete l'adresse de la socket
     
-    adrlect.sin_family=AF_INET;
-    adrlect.sin_port=htons(6003);
-    adrlect.sin_addr.s_addr=INADDR_ANY; // Toutes adresse de la machine est valable
-    
-    
-    // Etape 3 : On affecte une adresse a la socket d'ecoute
-    
-    erreur=bind(se, (const struct sockaddr *) &adrlect, sizeof(struct sockaddr_in));
-    
-    CHECK_ERROR(erreur,-1, "Echec de bind ! Verifie que le pseudo fichier n'existe pas deja.\n");
+//     adrlect.sin_family=AF_INET;
+//     adrlect.sin_port=htons(6003);
+//     adrlect.sin_addr.s_addr=INADDR_ANY; // Toutes adresse de la machine est valable
     
     
+//     // Etape 3 : On affecte une adresse a la socket d'ecoute
+    
+//     erreur=bind(se, (const struct sockaddr *) &adrlect, sizeof(struct sockaddr_in));
+    
+//     CHECK_ERROR(erreur,-1, "Echec de bind ! Verifie que le pseudo fichier n'existe pas deja.\n");
     
     
-    // Etape 4 : on se met l'ecoute des demandes des connexions
     
-    listen(se, 8);
     
-    printf("Lecteur en attente de connexion\n");
+//     // Etape 4 : on se met l'ecoute des demandes des connexions
     
-    // En attende de demande de connexions
-    while (1)
-    {
+//     listen(se, 8);
+    
+//     printf("Lecteur en attente de connexion\n");
+    
+//     // En attende de demande de connexions
+//     while (1)
+//     {
         
-    sd1=accept(se, NULL, NULL); //Je ne recupere pas l'adresse de celui qui ouvre la connexion
-    printf("Nouvelle connexion accepte par le serveur\n");
+//     sd1=accept(se, NULL, NULL); //Je ne recupere pas l'adresse de celui qui ouvre la connexion
+//     printf("Nouvelle connexion accepte par le serveur\n");
     
-    pid=fork(); //Creation du processus fils
+//     pid=fork(); //Creation du processus fils
     
-    //Etape 4
+//     //Etape 4
     
-    if (pid) {
-        //Je suis dans le pere
-        close(sd1); // Je ferme la socket de dialogue utilisee par le fils
-        nbfils++;
-    }
+//     if (pid) {
+//         //Je suis dans le pere
+//         close(sd1); // Je ferme la socket de dialogue utilisee par le fils
+//         nbfils++;
+//     }
     
-    else
-    {
-        //Je suis dans le fils
-    close(se);
-    do
-    {
-    if (size_rcvd) {
-        pthread_mutex_lock(&MUTEX_POSITION);
-        POSITION.x=pos.x;
-        POSITION.y=pos.y;
-        pthread_mutex_unlock(&MUTEX_POSITION);
-    }
+//     else
+//     {
+//         //Je suis dans le fils
+//     close(se);
+//     do
+//     {
+//     if (size_rcvd) {
+//         pthread_mutex_lock(&MUTEX_POSITION);
+//         POSITION.x=pos.x;
+//         POSITION.y=pos.y;
+//         pthread_mutex_unlock(&MUTEX_POSITION);
+//     }
     
-    size_rcvd=recv(sd1, &pos, sizeof(pos), 0) ; // Les deux NULL a la fin indique que je ne veux pas recuperer l'adresse de l'ecrivain
+//     size_rcvd=recv(sd1, &pos, sizeof(pos), 0) ; // Les deux NULL a la fin indique que je ne veux pas recuperer l'adresse de l'ecrivain
     
-    }
-    while (strcmp((char *)&pos, "fin"));
+//     }
+//     while (strcmp((char *)&pos, "fin"));
 
-    printf("Fermeture de LECTEUR %d\n", nbfils);
-    close(sd1);
-    }
-} // fin de la boucle accept du pere
+//     printf("Fermeture de LECTEUR %d\n", nbfils);
+//     close(sd1);
+//     }
+// } // fin de la boucle accept du pere
     
- close(se); // Ne sert a rien car je n'arrive jamais ici !!!
+//  close(se); // Ne sert a rien car je n'arrive jamais ici !!!
     
         
+// }
+
+void * envoideposition(void *arg){
+    while(!terminateProgram){
+        usleep(50000);
+        pthread_mutex_unlock(&MUTEX_POSITION);
+        struct position postoenv={POSITION.x,POSITION.y};
+        pthread_mutex_lock(&MUTEX_POSITION);
+        char message[MAX_CARS];
+        sprintf(message,"%d %d",postoenv.x,postoenv.y);
+        send(sdenvoiposition,message,MAX_CARS,0);
+
+    }
+}
+
+
+// structure réseau échangée avec le serveur
+struct __attribute__((packed)) PositionMsg {
+    int32_t   x;
+    int32_t   y;
+    int32_t   z;
+    uint64_t  timestamp;
+};
+
+static void CtrlHandler(int signum) { (void)signum; terminateProgram = true; }
+
+void* receptionposition(void *arg ) {
+    signal(SIGINT,  CtrlHandler);
+    signal(SIGQUIT, CtrlHandler);
+
+    // ---- Marvelmind ----
+    const char *ttyFileName = DEFAULT_TTY_FILENAME; // ex: /dev/ttyACM0
+    struct MarvelmindHedge *hedge = createMarvelmindHedge();
+    if (hedge == NULL) { puts("Error: Unable to create MarvelmindHedge");}
+    hedge->ttyFileName = ttyFileName;
+    hedge->verbose     = true;
+    startMarvelmindHedge(hedge);
+
+    // ---- Variables de travail ----
+    struct PositionValue new_pos;   // type du SDK Marvelmind
+    struct PositionMsg   pos_send;  // envoyé au serveur
+    struct PositionMsg   goal;      // objectif reçu
+    bool valid_this_cycle = false;
+    int n = 0;
+
+    // ---- Boucle principale ----
+    while ((!terminateProgram) && (!hedge->terminationRequired)) {
+        usleep(50000); // 50 ms
+
+        valid_this_cycle = false;
+        if (getPositionFromMarvelmindHedge(hedge, &new_pos)) {
+            if (new_pos.address == MY_HEDGE && new_pos.z != 0) {
+                //printf("[Hedge %d] T:%llu | X:%d | Y:%d | Z:%d\n", new_pos.address, new_pos.timestamp.timestamp64, new_pos.x, new_pos.y, new_pos.z);
+                valid_this_cycle = true;
+            }
+        }
+
+        if (++n >= 6) { // ~300 ms
+            n = 0;
+
+            // Envoi de la position au contrôleur
+            if (valid_this_cycle) {
+                pthread_mutex_lock(&MUTEX_POSITION);
+                POSITION.x = new_pos.x;
+                POSITION.y = new_pos.y;
+                pthread_mutex_unlock(&MUTEX_POSITION);
+            }
+
+        }
+        
+    }
+
+    // ---- Arrêts propres ----
+    stopMarvelmindHedge(hedge);
+    destroyMarvelmindHedge(hedge);
+    send(sdenvoiposition, "fin", 4, 0);
+    close(sdenvoiposition);
+    printf("Déconnexion du serveur.\n");
 }
 

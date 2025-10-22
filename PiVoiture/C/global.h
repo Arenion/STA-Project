@@ -37,6 +37,7 @@
 #define LOCAL_PORT 6000
 #define rayon_roue 27 //rayon de la roue
 #define largeur_voiture 113 //Largeur de la voiture entre deux roues
+#define MY_HEDGE    18
 
 
 enum demandeetat{

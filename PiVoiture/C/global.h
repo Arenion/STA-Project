@@ -1,4 +1,5 @@
 #pragma once
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -65,6 +66,7 @@ static enum {
 } ETATGOTOPOINT=GOTOPOINT_INIT;
 
 enum reservation{
+    NONITINIALISE = 0,
     RESERVATIONRONDPOINT,
     RESERVATPONT,
     PASDERESERVATION,
@@ -95,6 +97,9 @@ extern pthread_mutex_t MUTEX_NEXTOBJECTIF;
 extern struct position POSITION;//position actuelle de la voiture
 extern pthread_mutex_t MUTEX_POSITION;
 
+extern enum reservation RESERVATION;
+extern pthread_mutex_t MUTEX_RESERVATION;
+
 extern char INFOCAMERA[MAX_CARS-1];//données de la caméra, via une af_unix
 extern int FD;
 extern char donneecontroleur[MAX_CARS-1];//donnée du controleur, via une socket af_inet
@@ -110,3 +115,5 @@ extern int RPM;
 
 
 extern int ANGLE;//Angle de la voiture, issu de l'arduino
+
+void demandereservation(enum reservation areserver);

@@ -139,7 +139,6 @@ bool followtraj(void *arg){
     // }
     //turn(phi,RPM);
     //advance(sqrt((xd-xv)*(xd-xv)+(yd-yv)*(yd-yv)),RPM);
-
 }
 
 long initgothrougharc(double longueur_arc, int diffang, int RPM){

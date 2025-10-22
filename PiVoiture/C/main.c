@@ -15,6 +15,7 @@ void *receptionposition(void * arg);//fonction permettant de recevoir la postion
 // les deux codes précédent sont à utiliser dans deux situations: trajectoire suivant des points, et peut-être le dépassement 
 void gestionfinprogramme();
 void *envoideposition(void * arg);
+void *initialisation(void * argu);
 
 
 // Fonction pour convertir un entier baudrate → valeur termios
@@ -84,6 +85,7 @@ int main(int argc, char *argv[]) {
     pthread_t thread_getposition;//thread permettant d'obtenir la position via le marvelmind
     pthread_t thread_stop; //thread gérant une commande stop du controlleur controlleur -> voiture 
     pthread_t thread_envoiposition;//thread gérant l'envoi de la position voitur -> controlleur
+    pthread_t thread_initialisation;//thread gérant l'initialisation du programme
 
     //initialisation des arguments des threads
     struct arg_socket autorisationdepassement={6000, 0};// pour le depassement on note 0 pour un refus et 1 pour une autorisation
@@ -103,6 +105,7 @@ int main(int argc, char *argv[]) {
 
     struct arg_socket envoiposition= {6003, "0 0"};
     
+    struct arg_socket initialize ={6005, ""};
 
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <port> <baudrate>\n", argv[0]);
@@ -124,6 +127,9 @@ int main(int argc, char *argv[]) {
     }
     printf("Ouverture de %s à %d bauds réussie.\n", port, baud_raw);
 
+    pthread_create(&thread_initialisation,NULL,initialisation,NULL);//on attend que le programme du controleur soit bien commencé, on fait ça avec un thread à part afin d'être
+    pthread_join(thread_initialisation,NULL);
+    
     sddemandedereservation =startenvoicontrolleur(&demandereservation);
     sdobjectifsuivant=startenvoicontrolleur(&objectifsuivant);
     sdenvoiposition=startenvoicontrolleur(&envoiposition);
@@ -525,3 +531,51 @@ void* receptionposition(void *arg ) {
     printf("Déconnexion du serveur.\n");
 }
 
+void *initialisation(void * argu)
+{
+    struct arg_socket * arg=(struct arg_socket *)argu;
+    int local_port =arg->Port;
+    int se ; //socket d'ecoute
+    int sd1 ; //socket de dialogue
+    
+    int pid;
+    
+    struct sockaddr_in adrlect , adrecriv ; //adresses dans le domaine AF_INET
+    
+    int erreur; 
+    int nbcars; 
+    
+    char buff[MAX_CARS];
+    
+    int nbfils=1;
+    
+    //Etape 1 : creation de la socket
+    
+    se=socket(AF_INET, SOCK_STREAM,0); // La socket va utilise TCP
+    
+    printf("Descripteur de socket = %d \n", se); // Inutile
+    
+    CHECK_ERROR(sd1,-1, "erreur de creation de la socket !!! \n");
+    
+    // Etape 2  : On complete l'adresse de la socket
+    
+    adrlect.sin_family=AF_INET;
+    adrlect.sin_port=htons(local_port);
+    adrlect.sin_addr.s_addr=INADDR_ANY; // Toutes adresse de la machine est valable
+    
+    
+    // Etape 3 : On affecte une adresse a la socket d'ecoute
+    
+    erreur=bind(se, (const struct sockaddr *) &adrlect, sizeof(struct sockaddr_in));
+    
+    CHECK_ERROR(erreur,-1, "Echec de bind !!! Verifie que le pseudo fichier n'existe pas deja !!! \n");
+    
+    
+    
+    
+    // Etape 4 : on se met l'ecoute des demandes des connexions
+    
+    listen(se, 8);
+    
+    // printf("Lecteur en attente de connexion !!! \n");
+}

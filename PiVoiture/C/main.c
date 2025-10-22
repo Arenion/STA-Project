@@ -532,13 +532,14 @@ void* receptionposition(void *arg ) {
 }
 
 void *initialisation(void * argu)
-{
+{   printf("test1\n");
     struct arg_socket * arg=(struct arg_socket *)argu;
     int local_port =arg->Port;
     int se ; //socket d'ecoute
     int sd1 ; //socket de dialogue
-    
+    printf("test2\n");
     int pid;
+
     
     struct sockaddr_in adrlect , adrecriv ; //adresses dans le domaine AF_INET
     

@@ -70,12 +70,22 @@ float point_line_distance2(struct line line, struct position point, struct posit
     return min_dist;
 }
 
+bool point_after_segment(struct position p1, struct position p2, struct position point)
+{
+    float dx1 = p1.x - p2.x;
+    float dy1 = p1.y - p2.y;
+    float dx2 = point.x - p2.x;
+    float dy2 = point.y - p2.y;
+
+    return dx1 * dx2 + dy1 * dy2 < 0;
+}
+
 struct map_node *closest_map_node(struct position point)
 {
     assert(MAP.n_nodes > 0);
 
     float min_dist = INFINITY;
-    struct map_node * closest_node;
+    struct map_node *closest_node;
 
     for (int i = 1; i < MAP.n_nodes - 1; ++i)
     {
@@ -94,13 +104,14 @@ int find_node_index(struct map_node *node)
 {
     for (int i = 0; i < MAP.n_nodes; ++i)
     {
-        if (MAP.nodes[i] == node) return i;
+        if (MAP.nodes[i] == node)
+            return i;
     }
     return -1;
 }
 
 float find_shortest_path(struct map_node *start, struct map_node *goal,
-                         struct map_node **out_path, int *out_path_len)
+                         struct map_node_list *path_output)
 {
     float dist[MAP.n_nodes];
     int prev[MAP.n_nodes];
@@ -124,31 +135,64 @@ float find_shortest_path(struct map_node *start, struct map_node *goal,
         int min_dist_i = -1;
         for (int i = 0; i < MAP.n_nodes; ++i)
         {
-            if (!visited[i] && dist[i] < dist[min_dist_i]) min_dist_i = i;
+            if (!visited[i] && dist[i] < dist[min_dist_i])
+                min_dist_i = i;
         }
 
-        if (min_dist_i == -1) break; // We have finished looking everywhere
-        
+        if (min_dist_i == goal_i || min_dist_i == -1)
+            break; // We have found the goal, or finished looking everywhere (souldn't happen ?)
+
         visited[min_dist_i] = true;
 
-        
+        // Le calcul de distance est pourri, ça prend pas en compre que le départ peut être au milieu d'un node, et l'arrivé au milieu d'un autre node. Mais plus de temps d'améliorer ça.
+        for (int i = 0; i < MAP.nodes[min_dist_i]->next_nodes.n_nodes; ++i)
+        {
+            int child_i = find_node_index(MAP.nodes[min_dist_i]->next_nodes.nodes[i]);
+
+            if (child_i < 0 || visited[child_i])
+                continue;
+
+            float alt = dist[min_dist_i] + MAP.nodes[min_dist_i]->weight;
+            if (alt < dist[child_i])
+            {
+                dist[child_i] = alt;
+                prev[child_i] = min_dist_i;
+            }
+        }
     }
+
+    if (path_output)
+    {
+        int path[MAP.n_nodes];
+        int len = 0;
+        for (int u = goal_i; u != start_i; u = prev[u])
+            path[len++] = u;
+
+        path[len] = start_i;
+        // Reverse order
+        for (int i = 0; i < len; ++i)
+            path_output->nodes[i] = MAP.nodes[path[len - i]];
+
+        path_output->n_nodes = len;
+    }
+
+    return dist[goal_i];
 }
 
 // TODO: Hardcode the map here.
 
-static bool always_pass(void *arg) { (void)arg; return true; }
+static void always_pass(struct map_node *map_node){};
 
 // Geometry
-static struct position line1_vertices[] = { {0, 0}, {1000, 0} };
-static struct position line2_vertices[] = { {1000, 0}, {2000, 500} };
+static struct position line1_vertices[] = {{0, 0}, {1000, 0}};
+static struct position line2_vertices[] = {{1000, 0}, {2000, 500}};
 
 static struct line line1 = {2, line1_vertices};
 static struct line line2 = {2, line2_vertices};
 
-static struct position poly1_vertices[] = { {0, 0}, {200, -100}, {200, 100} };
-static struct position poly2_vertices[] = { {1000, 0}, {1200, -100}, {1200, 100} };
-static struct position poly3_vertices[] = { {2000, 500}, {2200, 400}, {2200, 600} };
+static struct position poly1_vertices[] = {{0, 0}, {200, -100}, {200, 100}};
+static struct position poly2_vertices[] = {{1000, 0}, {1200, -100}, {1200, 100}};
+static struct position poly3_vertices[] = {{2000, 500}, {2200, 400}, {2200, 600}};
 
 static struct polygon poly1 = {3, poly1_vertices};
 static struct polygon poly2 = {3, poly2_vertices};
@@ -158,36 +202,28 @@ static struct polygon poly3 = {3, poly3_vertices};
 static struct map_node nodeA;
 static struct map_node nodeB;
 
-static struct map_node *nodeA_next_nodes[] = { &nodeB };
-static struct map_node *nodeB_prev_nodes[] = { &nodeA };
+static struct map_node *nodeA_next_nodes[] = {&nodeB};
+static struct map_node *nodeB_prev_nodes[] = {&nodeA};
 
-static struct map_node_list nodeA_next_list = { 1, nodeA_next_nodes };
-static struct map_node_list nodeB_prev_list = { 1, nodeB_prev_nodes };
-static struct map_node_list empty_list = { 0, NULL };
+static struct map_node_list nodeA_next_list = {1, nodeA_next_nodes};
+static struct map_node_list nodeB_prev_list = {1, nodeB_prev_nodes};
+static struct map_node_list empty_list = {0, NULL};
 
 // Global map node array
-static struct map_node *map_nodes[] = { &nodeA, &nodeB };
-struct map_node_list MAP = { 2, map_nodes };
+static struct map_node *map_nodes[] = {&nodeA, &nodeB};
+struct map_node_list MAP = {2, map_nodes};
 
 // --- Initialization function ---
-__attribute__((constructor))  // optional: runs automatically at startup (GCC extension)
+__attribute__((constructor)) // optional: runs automatically at startup (GCC extension)
 static void init_map(void)
 {
     nodeA.line = line1;
-    nodeA.start_poly = poly1;
-    nodeA.stop_poly = poly2;
     nodeA.weight = 5;
     nodeA.passing_fct = always_pass;
-    nodeA.passing_fct_arg = NULL;
-    nodeA.previous_nodes = empty_list;
     nodeA.next_nodes = nodeA_next_list;
 
     nodeB.line = line2;
-    nodeB.start_poly = poly2;
-    nodeB.stop_poly = poly3;
     nodeB.weight = 8;
     nodeB.passing_fct = always_pass;
-    nodeB.passing_fct_arg = NULL;
-    nodeB.previous_nodes = nodeB_prev_list;
     nodeB.next_nodes = empty_list;
 }

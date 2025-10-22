@@ -9,7 +9,7 @@ pthread_mutex_t MUTEX_NEXTOBJECTIF;
 struct position POSITION;//position actuelle de la voiture
 pthread_mutex_t MUTEX_POSITION;
 
-enum reservation RESERVATION;
+enum reservation RESERVATION = NONITINIALISE;
 pthread_mutex_t MUTEX_RESERVATION;
 
 pthread_mutex_t MUTEX_REUSSITEOBJECTIF;
@@ -36,6 +36,13 @@ int sddemandedereservation;//socket de la demande de la demande de reservation
 int sdenvoiposition;//socket pour l'envoi de la position
 
 void demandereservation(enum reservation areserver){
+    static enum reservation derniere_demande = NONITINIALISE;
+
+    // Pour éviter de spam la demande, si elle a déjà été faite, ne rien faire.
+    if (derniere_demande && derniere_demande == areserver)
+        return;
+
+    // Sinon faire la demande.
     switch (areserver)
     {
     case RESERVATIONRONDPOINT:
@@ -43,11 +50,12 @@ void demandereservation(enum reservation areserver){
         break;
     case RESERVATPONT:
         send(sddemandedereservation,"2",1,0);
+        break;
     case PASDERESERVATION:
         send(sddemandedereservation,"0",1,0);    
-    default:
         break;
     }
+    derniere_demande = areserver;
 }
 
 void annoncereussiteobjectif(){

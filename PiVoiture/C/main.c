@@ -578,4 +578,64 @@ void *initialisation(void * argu)
     listen(se, 8);
     
     // printf("Lecteur en attente de connexion !!! \n");
+     while (1)
+    {
+        
+    sd1=accept(se, NULL, NULL); //Je ne recupere pas l'adresse de celui qui ouvre la connexion
+    // printf("Nouvelle connexion accepte par le serveur !!!\n");
+    
+    pid=fork(); //Creation du processus fils
+    
+    //Etape 4
+    
+    if (pid) {
+        //Je suis dans le pere
+        close(sd1); // Je ferme la socket de dialogue utilisee par le fils
+        nbfils++;
+    }
+    
+    else
+    {
+        //Je suis dans le fils
+    close(se);
+    do
+    {
+    //(recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen);
+
+    nbcars=recv(sd1, buff,MAX_CARS, 0) ; // Les deux NULL a la fin indique que je ne veux pas recuperer l'adresse de l'ecrivain
+
+    if (nbcars){
+        
+        strcpy(arg->message,buff);
+        if  (local_port==6000){//gestion des depassements
+            printf("DEPASSEMENT AUTORISE\n");
+            atomic_store(&DEMANDEETAT,DEMANDEDEPPASSEMENT);
+            }
+        if (local_port==6001){
+            printf("OBJECTIF SUIVANT RECU\n");
+            pthread_mutex_lock(&MUTEX_NEXTOBJECTIF);
+            sscanf(buff, "%d %d",&(NEXTOBJECTIF.x),&(NEXTOBJECTIF.y));
+            pthread_mutex_unlock(&MUTEX_NEXTOBJECTIF);
+            }
+        if (local_port==6002){//gestion de la commande stop
+            printf("ARRET DU SYSTEME\n");
+            send_command(FD,0,0);//si on reçoit un message du thread stop on arréte les moteurs
+            atomic_store(&terminateProgram,true);//et on arréte les programmes
+            }
+
+    
+    
+        }   
+    
+    }
+    while (strcmp(buff, "fin")!=0 ||(terminateProgram));
+    
+    // printf("Appuyez sur une touche pour quitter !!! \n");
+    getchar();
+    close(sd1);
+    }
+} // fin de la boucle accept du pere
+    
+ close(se); // Ne sert a rien car je n'arrive jamais ici !!!
+    
 }

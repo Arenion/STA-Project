@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
 
     struct arg_socket envoiposition= {6003, "0 0"};
     
-    struct arg_socket initialize ={6005, ""};
+    struct arg_socket initialize ={6005, " "};
 
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <port> <baudrate>\n", argv[0]);

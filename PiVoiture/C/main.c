@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
     pthread_t thread_initialisation;//thread gérant l'initialisation du programme
 
     //initialisation des arguments des threads
-    struct arg_socket autorisationdepassement={6000, 0};// pour le depassement on note 0 pour un refus et 1 pour une autorisation
+    struct arg_socket autorisationdepassement={6000, "0"};// pour le depassement on note 0 pour un refus et 1 pour une autorisation
 
     struct arg_socket objectifsuivant;//pour les objectifs, on utilise un arrray de 2 entiers de 32 bits
     objectifsuivant.Port=6001;
@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
     }
     printf("Ouverture de %s à %d bauds réussie.\n", port, baud_raw);
 
-    pthread_create(&thread_initialisation,NULL,(void*)initialisation,NULL);//on attend que le programme du controleur soit bien commencé, on fait ça avec un thread à part afin d'être
+    pthread_create(&thread_initialisation,NULL,(void*)&initialisation,NULL);//on attend que le programme du controleur soit bien commencé, on fait ça avec un thread à part afin d'être
     pthread_join(thread_initialisation,NULL);
     
     sddemandedereservation =startenvoicontrolleur(&demandereservation);

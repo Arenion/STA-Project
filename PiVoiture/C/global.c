@@ -33,6 +33,7 @@ int RPM;
 int ANGLE;//Angle de la voiture, issu de l'arduino
 int sdobjectifsuivant; //socket de demande de l'objectif suivant
 int sddemandedereservation;//socket de la demande de la demande de reservation
+int sdenvoiposition;//socket pour l'envoi de la position
 
 void demandereservation(enum reservation areserver){
     switch (areserver)

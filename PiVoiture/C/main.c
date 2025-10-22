@@ -83,6 +83,7 @@ int main(int argc, char *argv[]) {
     pthread_t thread_sendcommandarduino;
     pthread_t thread_getposition;//thread permettant d'obtenir la position via le marvelmind
     pthread_t thread_stop; //thread gérant une commande stop du controlleur controlleur -> voiture 
+    pthread_t thread_envoiposition;//thread gérant l'envoi de la position voitur -> controlleur
 
     //initialisation des arguments des threads
     struct arg_socket autorisationdepassement={6000, 0};// pour le depassement on note 0 pour un refus et 1 pour une autorisation
@@ -99,6 +100,8 @@ int main(int argc, char *argv[]) {
     struct arg_socket reussiteobjectif={6001, "0"};// 0 pour non réussite, 1 pour réussite
     
     struct arg_socket actualisationtronçon={6002,"0"};//même syntaxe que demandereservation
+
+    struct arg_socket envoiposition= {6003, "0 0"};
     
 
     if (argc != 3) {
@@ -123,6 +126,7 @@ int main(int argc, char *argv[]) {
 
     sddemandedereservation =startenvoicontrolleur(&demandereservation);
     sdobjectifsuivant=startenvoicontrolleur(&objectifsuivant);
+    sdenvoiposition=startenvoicontrolleur(&envoiposition);
     //pthread_create(&thread_stop,NULL,receptioncontrolleur,(void*)&demandestop);
     pthread_create(&thread_socketcamera,NULL,lecturedonneescamera,PSEUDOFICHIER);
     pthread_create(&thread_sendcommandarduino,NULL,navigationthread,NULL);

@@ -533,9 +533,9 @@ void* receptionposition(void *arg ) {
 
 void *initialisation(void *argu)
 {   printf("test1\n");
-    struct arg_socket * arg=(struct arg_socket *)argu;
+    struct arg_socket arg=*(struct arg_socket *)argu;
     printf("test3\n");
-    int local_port =arg->Port;
+    int local_port =arg.Port;
     int se ; //socket d'ecoute
     int sd1 ; //socket de dialogue
     printf("test2\n");

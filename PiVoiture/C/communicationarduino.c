@@ -99,6 +99,7 @@ float calculratiosuivitraj(struct position debutsegment,struct position finsegme
 }
 
 bool followtraj(void *arg){
+    struct map_node Node =*(struct map_node *)arg; 
     struct position segment[2];
     int8_t vitessemot[2];
     pthread_mutex_lock(&MUTEX_POSITION);
@@ -106,7 +107,7 @@ bool followtraj(void *arg){
     int yv = POSITION.y;
     pthread_mutex_unlock(&MUTEX_POSITION);
     struct position voiture={xv,yv};
-    struct line LINE =*(struct line *)arg;
+    struct line LINE =Node.line;
     point_line_distance2(LINE, voiture, segment);
     float ratio=calculratiosuivitraj(segment[0],segment[1],voiture);
     pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);

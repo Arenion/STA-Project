@@ -19,13 +19,13 @@ bool is_new_objective()
     if (NEXTOBJECTIF.x == last_objective.x && NEXTOBJECTIF.y == last_objective.y)
     {
         pthread_mutex_unlock(&MUTEX_NEXTOBJECTIF);
-        return true;
+        return false;
     }
     else
     {
         last_objective = NEXTOBJECTIF;
         pthread_mutex_unlock(&MUTEX_NEXTOBJECTIF);
-        return false;
+        return true;
     }
 }
 

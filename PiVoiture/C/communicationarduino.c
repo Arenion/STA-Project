@@ -1,12 +1,12 @@
 #include "global.h"
 #include "communicationarduino.h"
-#include "Statemachine/map.h"
 
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]);//focntion transformant le ratio et le rpm en vitesse mot gauche et droite
 void advance(int dist,int8_t RPM);//fonction avancer la voiture d'une distance dist en mm pour une rotation des moteurs de RPM
 void initturn(int theta, int8_t RPM, int * timetoturn);//fonction pour tourner d'un angle theta dans le sens des aiguilles d'une montre pour une rotation des moteurs de RPMs
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]);
 long initgothrougharc(double longueur_arc, int diffang, int RPM);
+float vitesseangulairepoint(int RPM,float erreurangulaire,float erreurdistance);//fonnction calculant la vitesse angulaire en fonction de l'erreur angulaire et l'erreur de distance
 
 
 void send_command(int fd, int8_t rpmg, int8_t rpmd) {
@@ -89,8 +89,17 @@ void followtraj(struct map_node * NodeP){
     pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
     int RPM= INFORMATIONARDUINO.RPM;
     pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
-    ratRPMtovitmot(ratio,RPM,vitessemot);
-    send_command(FD,vitessemot[0],vitessemot[1]);
+    pthread_mutex_lock(&MUTEX_ERREUR_ANGULAIRE);
+    float erang= erreur_angulaire;
+    pthread_mutex_unlock(&MUTEX_ERREUR_ANGULAIRE);
+    pthread_mutex_lock(&MUTEX_ERREUR_DISTANCE);
+    float erdis =erreur_distance;
+    pthread_mutex_unlock(&MUTEX_ERREUR_DISTANCE);
+    float vitesseangulaire=vitesseangulairepoint(RPM,erdis,erang);
+    float vitessemoy= RPM*rayon_roue/60;
+    float vg= vitessemoy+largeur_voiture*vitesseangulaire;
+    float vd= vitessemoy-largeur_voiture*vitesseangulaire;
+    send_command(FD,(int8_t) 60*vg/(2*3.14*rayon_roue),(int8_t) 60*vd/(2*3.14*rayon_roue));
 
     // switch (ETATGOTOPOINT)
     // {
@@ -123,4 +132,11 @@ long initgothrougharc(double longueur_arc, int diffang, int RPM){
     float omega=diffang/time;
     send_command(FD,(int8_t)(60/rayon_roue)*(vitesse+largeur_voiture*omega),(int8_t)(60/rayon_roue)*(vitesse-largeur_voiture*omega));
     return time;
+}
+
+float vitesseangulairepoint(int RPM,float erreurangulaire,float erreurdistance){//fonnction calculant la vitesse angulaire en fonction de l'erreur angulaire et l'erreur de distance
+    float vitesse= (rayon_roue*RPM*2*3.14/60);//on passe de rotation des vitesse des roues en tr/min à une vitesse en m/s
+    float k =k0*cos(erreur_angulaire);//fonction chois arbitrairement
+    float vitesseangulaire= ((-vitesse*tan(erreurangulaire)/l1)-(vitesse*k*erreurdistance/cos(erreur_angulaire)));
+    return vitesseangulaire;
 }

@@ -14,6 +14,13 @@ pthread_mutex_t MUTEX_RESERVATION;
 
 pthread_mutex_t MUTEX_REUSSITEOBJECTIF;
 
+float erreur_angulaire;
+pthread_mutex_t MUTEX_ERREUR_ANGULAIRE;
+
+float erreur_distance;
+pthread_mutex_t MUTEX_ERREUR_DISTANCE;
+
+
 char INFOCAMERA[MAX_CARS-1];//données de la caméra, via une af_unix
 int FD;
 char donneecontroleur[MAX_CARS-1];//donnée du controleur, via une socket af_inet
@@ -34,6 +41,9 @@ int ANGLE;//Angle de la voiture, issu de l'arduino
 int sdobjectifsuivant; //socket de demande de l'objectif suivant
 int sddemandedereservation;//socket de la demande de la demande de reservation
 int sdenvoiposition;//socket pour l'envoi de la position
+
+int l1=10;//distance l1 en mm, à changer pour changer le calcul d'erreur
+int k0=5;//coefficient k0 à changer pour changer le calcul d'erreur
 
 void demandereservation(enum reservation areserver){
     static enum reservation derniere_demande = NONITINIALISE;

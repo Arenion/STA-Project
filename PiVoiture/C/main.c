@@ -6,8 +6,6 @@
 
 #include "Statemachine/statemachine.h"
 #include "global.c"
-#include "communicationarduino.h"
-#include "Statemachine/map.h"
 void *lecturedonneescamera(void *arg);//connexion de socket de la caméra pour lire données: caméra -> voiture
 void *receptioncontrolleur(void * argu);// fonction permettant de recevoir des données du controlleur: controlleur -> voiture
 int startenvoicontrolleur(struct arg_socket * arg);//fonction envoyant des données 

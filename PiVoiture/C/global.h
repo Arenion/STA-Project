@@ -114,8 +114,21 @@ extern char panneau[MAX_CARS-1];
 extern int8_t vitessemot[2];
 extern int RPM;
 
+extern int l1;//distance l1 en mm, à changer pour changer le calcul d'erreur
+extern int k0;//coefficient k0 à changer pour changer le calcul d'erreur
+
 
 extern int ANGLE;//Angle de la voiture, issu de l'arduino
 
 void demandereservation(enum reservation areserver);
 void annoncereussiteobjectif();
+
+extern float erreur_angulaire;
+extern pthread_mutex_t MUTEX_ERREUR_ANGULAIRE;
+
+extern float erreur_distance;
+extern pthread_mutex_t MUTEX_ERREUR_DISTANCE;
+
+extern int sdobjectifsuivant; //socket de demande de l'objectif suivant
+extern int sddemandedereservation;//socket de la demande de la demande de reservation
+extern int sdenvoiposition;//socket pour l'envoi de la position

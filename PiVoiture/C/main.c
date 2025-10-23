@@ -15,7 +15,7 @@ void *receptionposition(void * arg);//fonction permettant de recevoir la postion
 // les deux codes précédent sont à utiliser dans deux situations: trajectoire suivant des points, et peut-être le dépassement 
 void gestionfinprogramme();
 void *envoideposition(void * arg);
-void *initialisation(void * argu);
+void initialisation(int port);
 
 
 // Fonction pour convertir un entier baudrate → valeur termios
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
 
     //pthread_create(&thread_initialisation,NULL,(void *)&initialisation,NULL);//on attend que le programme du controleur soit bien commencé, on fait ça avec un thread à part afin d'être
     //pthread_join(thread_initialisation,NULL);
-    
+    initialisation(6005);
     // sddemandedereservation =startenvoicontrolleur(&demandereservation);
     // sdobjectifsuivant=startenvoicontrolleur(&objectifsuivant);
     // sdenvoiposition=startenvoicontrolleur(&envoiposition);
@@ -531,14 +531,12 @@ void* receptionposition(void *arg ) {
     printf("Déconnexion du serveur.\n");
 }
 
-void *initialisation(void *argu)
-{   printf("test1\n");
-    struct arg_socket arg=*(struct arg_socket *)argu;
-    printf("test3\n");
-    int local_port =arg.Port;
+void initialisation(int port)
+{   
+    int local_port =port;
     int se ; //socket d'ecoute
     int sd1 ; //socket de dialogue
-    printf("test2\n");
+    //printf("test2\n");
     int pid;
 
     
@@ -578,66 +576,6 @@ void *initialisation(void *argu)
     // Etape 4 : on se met l'ecoute des demandes des connexions
     
     listen(se, 8);
+    printf("Connexion au controleur réussi !\n");
     
-    // printf("Lecteur en attente de connexion !!! \n");
-     while (1)
-    {
-        
-    sd1=accept(se, NULL, NULL); //Je ne recupere pas l'adresse de celui qui ouvre la connexion
-    // printf("Nouvelle connexion accepte par le serveur !!!\n");
-    
-    pid=fork(); //Creation du processus fils
-    
-    //Etape 4
-    
-    if (pid) {
-        //Je suis dans le pere
-        close(sd1); // Je ferme la socket de dialogue utilisee par le fils
-        nbfils++;
-    }
-    
-    else
-    {
-        //Je suis dans le fils
-    close(se);
-    do
-    {
-    //(recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen);
-
-    nbcars=recv(sd1, buff,MAX_CARS, 0) ; // Les deux NULL a la fin indique que je ne veux pas recuperer l'adresse de l'ecrivain
-
-    if (nbcars){
-        
-        strcpy(arg.message,buff);
-        if  (local_port==6000){//gestion des depassements
-            printf("DEPASSEMENT AUTORISE\n");
-            atomic_store(&DEMANDEETAT,DEMANDEDEPPASSEMENT);
-            }
-        if (local_port==6001){
-            printf("OBJECTIF SUIVANT RECU\n");
-            pthread_mutex_lock(&MUTEX_NEXTOBJECTIF);
-            sscanf(buff, "%d %d",&(NEXTOBJECTIF.x),&(NEXTOBJECTIF.y));
-            pthread_mutex_unlock(&MUTEX_NEXTOBJECTIF);
-            }
-        if (local_port==6002){//gestion de la commande stop
-            printf("ARRET DU SYSTEME\n");
-            send_command(FD,0,0);//si on reçoit un message du thread stop on arréte les moteurs
-            atomic_store(&terminateProgram,true);//et on arréte les programmes
-            }
-
-    
-    
-        }   
-    
-    }
-    while (strcmp(buff, "fin")!=0 ||(terminateProgram));
-    
-    // printf("Appuyez sur une touche pour quitter !!! \n");
-    getchar();
-    close(sd1);
-    }
-} // fin de la boucle accept du pere
-    
- close(se); // Ne sert a rien car je n'arrive jamais ici !!!
-    
-}
+  }

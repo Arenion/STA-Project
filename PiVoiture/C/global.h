@@ -34,7 +34,7 @@
 #define LENT 80 //RPM pour instruction de vitesse lente
 #define RAPIDE 127 //RPM pour instruction de vitesse rapide
 #define REMOTE_PORT 6000
-#define REMOTE_IP   "127.0.0.1"
+#define REMOTE_IP   "192.168.8.241"
 #define LOCAL_PORT 6000
 #define rayon_roue 27 //rayon de la roue
 #define largeur_voiture 113 //Largeur de la voiture entre deux roues

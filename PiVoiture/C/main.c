@@ -127,19 +127,20 @@ int main(int argc, char *argv[]) {
     }
     printf("Ouverture de %s à %d bauds réussie.\n", port, baud_raw);
 
-    //pthread_create(&thread_initialisation,NULL,(void *)&initialisation,NULL);//on attend que le programme du controleur soit bien commencé, on fait ça avec un thread à part afin d'être
-    //pthread_join(thread_initialisation,NULL);
-    initialisation(6005);
-    // sddemandedereservation =startenvoicontrolleur(&demandereservation);
-    // sdobjectifsuivant=startenvoicontrolleur(&objectifsuivant);
-    // sdenvoiposition=startenvoicontrolleur(&envoiposition);
-    //pthread_create(&thread_stop,NULL,receptioncontrolleur,(void*)&demandestop);
-    pthread_create(&thread_socketcamera,NULL,lecturedonneescamera,PSEUDOFICHIER);
-    //pthread_create(&thread_sendcommandarduino,NULL,navigationthread,NULL);
     pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void *)&autorisationdepassement);
     pthread_create(&thread_objectifsuivant,NULL,receptioncontrolleur,(void *)&objectifsuivant);
     pthread_create(&thread_getposition,NULL,receptionposition,NULL);
     pthread_create(&thread_envoiposition,NULL,envoideposition,NULL);
+    //pthread_create(&thread_initialisation,NULL,(void *)&initialisation,NULL);//on attend que le programme du controleur soit bien commencé, on fait ça avec un thread à part afin d'être
+    //pthread_join(thread_initialisation,NULL);
+    initialisation(6005);
+    sddemandedereservation =startenvoicontrolleur(&demandereservation);
+    sdobjectifsuivant=startenvoicontrolleur(&objectifsuivant);
+    sdenvoiposition=startenvoicontrolleur(&envoiposition);
+    //pthread_create(&thread_stop,NULL,receptioncontrolleur,(void*)&demandestop);
+    pthread_create(&thread_socketcamera,NULL,lecturedonneescamera,PSEUDOFICHIER);
+    //pthread_create(&thread_sendcommandarduino,NULL,navigationthread,NULL);
+    
    //pthread_join(thread_stop,NULL);
     //pthread_join(thread_sendcommandarduino,NULL);
     pthread_join(thread_socketcamera,NULL);

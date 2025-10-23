@@ -21,7 +21,6 @@ bool is_obstacle()
 bool step_navigation(bool entering)
 {
     static enum states_navigation current_state = GENERE_ITINERAIRE;
-    static struct map_node_list current_itineraire;
     static int current_etape;
     static bool first_reservation_demande = true;
     static bool first_obstacle_seen = true;
@@ -61,7 +60,7 @@ bool step_navigation(bool entering)
         break;
     case VERIFRESERVATION:
         pthread_mutex_lock(&MUTEX_RESERVATION);
-        if (RESERVATION == current_itineraire.nodes[current_etape]->reservation)
+        if (RESERVATION == path.nodes[current_etape]->reservation)
         {
             printf("NAVIGATION: Réservation pour l'étape correcte.\n");
             pthread_mutex_unlock(&MUTEX_RESERVATION);
@@ -71,7 +70,7 @@ bool step_navigation(bool entering)
         else
         {
             pthread_mutex_unlock(&MUTEX_RESERVATION);
-            demandereservation(current_itineraire.nodes[current_etape]->reservation);
+            demandereservation(path.nodes[current_etape]->reservation);
             if (first_reservation_demande)
             {
                 printf("NAVIGATION: Réservation pour l'étape incorrecte, arrêt de la voiture.\n");
@@ -99,7 +98,7 @@ bool step_navigation(bool entering)
 
         printf("NAVIGATION: Execution de l'étape.\n");
         // Execute step
-        current_itineraire.nodes[current_etape]->passing_fct(current_itineraire.nodes[current_etape]);
+        path.nodes[current_etape]->passing_fct(path.nodes[current_etape]);
 
         // Check if step finished
         pthread_mutex_lock(&MUTEX_POSITION);
@@ -107,11 +106,11 @@ bool step_navigation(bool entering)
         pthread_mutex_unlock(&MUTEX_POSITION);
         // TODO : gérer le point d'arrivé.
         // Vérification de si on est derrière le dernier segment du noeud, ou proche du dernier point.
-        if (distance_between_positions(current_itineraire.nodes[current_etape]->line.vertices[current_itineraire.nodes[current_etape]->line.n_vertices - 1], current_position) < 10.0f || point_after_segment(current_itineraire.nodes[current_etape]->line.vertices[current_itineraire.nodes[current_etape]->line.n_vertices - 2], current_itineraire.nodes[current_etape]->line.vertices[current_itineraire.nodes[current_etape]->line.n_vertices - 1], current_position)) // are we arrived to end of step ?
+        if (distance_between_positions(path.nodes[current_etape]->line.vertices[path.nodes[current_etape]->line.n_vertices - 1], current_position) < 10.0f || point_after_segment(path.nodes[current_etape]->line.vertices[path.nodes[current_etape]->line.n_vertices - 2], path.nodes[current_etape]->line.vertices[path.nodes[current_etape]->line.n_vertices - 1], current_position)) // are we arrived to end of step ?
         {
             printf("NAVIGATION: étape finie.\n");
             current_etape++;
-            if (current_etape == current_itineraire.n_nodes)
+            if (current_etape == path.n_nodes)
             {
                 printf("NAVIGATION: arrivé à destination !\n");
                 annoncereussiteobjectif();

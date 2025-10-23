@@ -435,7 +435,7 @@ static struct map_node pont1_node = {
     .name = "pont1",
     .line = {.n_vertices = ARRAY_SIZE(pont1_vertices), .vertices = pont1_vertices},
     .weight = 0.0f,
-    .passing_fct = followtraj,
+    .passing_fct = lignedroite,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(pont1_node_next), .nodes = pont1_node_next}};
 
@@ -443,7 +443,7 @@ static struct map_node pont2_node = {
     .name = "pont2",
     .line = {.n_vertices = ARRAY_SIZE(pont2_vertices), .vertices = pont2_vertices},
     .weight = 0.0f,
-    .passing_fct = followtraj,
+    .passing_fct = lignedroite,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(pont2_node_next), .nodes = pont2_node_next}};
 
@@ -451,7 +451,7 @@ static struct map_node pont3_node = {
     .name = "pont3",
     .line = {.n_vertices = ARRAY_SIZE(pont3_vertices), .vertices = pont3_vertices},
     .weight = 0.0f,
-    .passing_fct = followtraj,
+    .passing_fct = lignedroite,
     .reservation = RESERVATPONT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(pont3_node_next), .nodes = pont3_node_next}};
 
@@ -459,7 +459,7 @@ static struct map_node pont4_node = {
     .name = "pont4",
     .line = {.n_vertices = ARRAY_SIZE(pont4_vertices), .vertices = pont4_vertices},
     .weight = 0.0f,
-    .passing_fct = followtraj,
+    .passing_fct = lignedroite,
     .reservation = RESERVATPONT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(pont4_node_next), .nodes = pont4_node_next}};
 

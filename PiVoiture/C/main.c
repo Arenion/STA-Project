@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
 
     pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void *)&autorisationdepassement);
     pthread_create(&thread_objectifsuivant,NULL,receptioncontrolleur,(void *)&objectifsuivant);
-    pthread_create(&thread_getposition,NULL,receptionposition,NULL);
+    pthread_create(&thread_getposition,NULL,receptionposition,NULL);//pour recevoir données du marvelmind
     //pthread_create(&thread_initialisation,NULL,(void *)&initialisation,NULL);//on attend que le programme du controleur soit bien commencé, on fait ça avec un thread à part afin d'être
     //pthread_join(thread_initialisation,NULL);
     initialisation(6005);
@@ -404,13 +404,7 @@ void *receptioncontrolleur(void * argu)
 //     // Etape 4 : on se met l'ecoute des demandes des connexions
     
 //     listen(se, 8);
-    
-//     printf("Lecteur en attente de connexion\n");
-    
-//     // En attende de demande de connexions
-//     while (1)
-//     {
-        
+
 //     sd1=accept(se, NULL, NULL); //Je ne recupere pas l'adresse de celui qui ouvre la connexion
 //     printf("Nouvelle connexion accepte par le serveur\n");
     
@@ -578,6 +572,40 @@ void initialisation(int port)
     printf("attente de connexion au controlleur \n");
     listen(se, 8);
     printf("Connexion au controleur réussi !\n");
+    while (1)
+    {
+        
+    sd1=accept(se, NULL, NULL); //Je ne recupere pas l'adresse de celui qui ouvre la connexion
+    // printf("Nouvelle connexion accepte par le serveur !!!\n");
+    
+    pid=fork(); //Creation du processus fils
+    
+    //Etape 4
+    
+    if (pid) {
+        //Je suis dans le pere
+        close(sd1); // Je ferme la socket de dialogue utilisee par le fils
+        nbfils++;
+    }
+    
+    else
+    {
+        //Je suis dans le fils
     close(se);
+    do
+    {
+    //(recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen);
+
+    nbcars=recv(sd1, buff,MAX_CARS, 0) ; // Les deux NULL a la fin indique que je ne veux pas recuperer l'adresse de l'ecrivain
+
+    if (nbcars){
+        close(se);
+        return;
+        }   
+    
+    }
+    while (1);
+    }
     
   }
+}

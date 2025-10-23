@@ -578,5 +578,6 @@ void initialisation(int port)
     printf("attente de connexion au controlleur \n");
     listen(se, 8);
     printf("Connexion au controleur réussi !\n");
+    close(se);
     
   }

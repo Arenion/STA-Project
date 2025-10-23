@@ -44,6 +44,7 @@ struct map_node
 };
 
 extern struct map_node_list MAP;
+void map_init();
 
 struct map_node *closest_map_node(struct position point);
 float find_shortest_path(struct map_node *start, struct map_node *goal,

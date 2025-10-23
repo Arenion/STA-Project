@@ -4,7 +4,7 @@
 #include <math.h>
 
 #include "../global.h"
-
+#include "../communicationarduino.h"
 int point_vertices_side(struct position p1, struct position p2, struct position pos)
 {
     return (pos.x - p1.x) * (p2.y - p1.y) - (pos.y - p1.y) * (p2.x - p1.x);
@@ -320,7 +320,7 @@ static struct position virage11_vertices[] = {P46, P63, P51};
 static struct position virage12_vertices[] = {P51, P64, P76};
 
 // TODO
-void suivi_points(struct map_node *map_node) {};
+void followtraj(struct map_node *map_node) {};
 void lignedroite(struct map_node *map_node);
 
 // ---- Nodes ----
@@ -427,266 +427,266 @@ static struct map_node ligne7_node = {
 static struct map_node pont1_node = {
     .line = {.n_vertices = ARRAY_SIZE(pont1_vertices), .vertices = pont1_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(pont1_node_next), .nodes = pont1_node_next}};
 
 static struct map_node pont2_node = {
     .line = {.n_vertices = ARRAY_SIZE(pont2_vertices), .vertices = pont2_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(pont2_node_next), .nodes = pont2_node_next}};
 
 static struct map_node pont3_node = {
     .line = {.n_vertices = ARRAY_SIZE(pont3_vertices), .vertices = pont3_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATPONT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(pont3_node_next), .nodes = pont3_node_next}};
 
 static struct map_node pont4_node = {
     .line = {.n_vertices = ARRAY_SIZE(pont4_vertices), .vertices = pont4_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATPONT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(pont4_node_next), .nodes = pont4_node_next}};
 
 static struct map_node park1_node = {
     .line = {.n_vertices = ARRAY_SIZE(park1_vertices), .vertices = park1_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(park1_node_next), .nodes = park1_node_next}};
 
 static struct map_node park7_node = {
     .line = {.n_vertices = ARRAY_SIZE(park7_vertices), .vertices = park7_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(park7_node_next), .nodes = park7_node_next}};
 
 static struct map_node park2_node = {
     .line = {.n_vertices = ARRAY_SIZE(park2_vertices), .vertices = park2_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(park2_node_next), .nodes = park2_node_next}};
 
 static struct map_node park8_node = {
     .line = {.n_vertices = ARRAY_SIZE(park8_vertices), .vertices = park8_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(park8_node_next), .nodes = park8_node_next}};
 
 static struct map_node park3_node = {
     .line = {.n_vertices = ARRAY_SIZE(park3_vertices), .vertices = park3_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(park3_node_next), .nodes = park3_node_next}};
 
 static struct map_node park9_node = {
     .line = {.n_vertices = ARRAY_SIZE(park9_vertices), .vertices = park9_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(park9_node_next), .nodes = park9_node_next}};
 
 static struct map_node park4_node = {
     .line = {.n_vertices = ARRAY_SIZE(park4_vertices), .vertices = park4_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(park4_node_next), .nodes = park4_node_next}};
 
 static struct map_node park10_node = {
     .line = {.n_vertices = ARRAY_SIZE(park10_vertices), .vertices = park10_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(park10_node_next), .nodes = park10_node_next}};
 
 static struct map_node park5_node = {
     .line = {.n_vertices = ARRAY_SIZE(park5_vertices), .vertices = park5_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(park5_node_next), .nodes = park5_node_next}};
 
 static struct map_node park11_node = {
     .line = {.n_vertices = ARRAY_SIZE(park11_vertices), .vertices = park11_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(park11_node_next), .nodes = park11_node_next}};
 
 static struct map_node park6_node = {
     .line = {.n_vertices = ARRAY_SIZE(park6_vertices), .vertices = park6_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(park6_node_next), .nodes = park6_node_next}};
 
 static struct map_node park12_node = {
     .line = {.n_vertices = ARRAY_SIZE(park12_vertices), .vertices = park12_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(park12_node_next), .nodes = park12_node_next}};
 
 static struct map_node rp1_node = {
     .line = {.n_vertices = ARRAY_SIZE(rp1_vertices), .vertices = rp1_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATIONRONDPOINT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp1_node_next), .nodes = rp1_node_next}};
 
 static struct map_node rp2_node = {
     .line = {.n_vertices = ARRAY_SIZE(rp2_vertices), .vertices = rp2_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATIONRONDPOINT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp2_node_next), .nodes = rp2_node_next}};
 
 static struct map_node rp3_node = {
     .line = {.n_vertices = ARRAY_SIZE(rp3_vertices), .vertices = rp3_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATIONRONDPOINT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp3_node_next), .nodes = rp3_node_next}};
 
 static struct map_node rp4_node = {
     .line = {.n_vertices = ARRAY_SIZE(rp4_vertices), .vertices = rp4_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATIONRONDPOINT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp4_node_next), .nodes = rp4_node_next}};
 
 static struct map_node rp5_node = {
     .line = {.n_vertices = ARRAY_SIZE(rp5_vertices), .vertices = rp5_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATIONRONDPOINT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp5_node_next), .nodes = rp5_node_next}};
 
 static struct map_node rp6_node = {
     .line = {.n_vertices = ARRAY_SIZE(rp6_vertices), .vertices = rp6_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATIONRONDPOINT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp6_node_next), .nodes = rp6_node_next}};
 
 static struct map_node rp7_node = {
     .line = {.n_vertices = ARRAY_SIZE(rp7_vertices), .vertices = rp7_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATIONRONDPOINT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp7_node_next), .nodes = rp7_node_next}};
 
 static struct map_node rp8_node = {
     .line = {.n_vertices = ARRAY_SIZE(rp8_vertices), .vertices = rp8_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATIONRONDPOINT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp8_node_next), .nodes = rp8_node_next}};
 
 static struct map_node rp9_node = {
     .line = {.n_vertices = ARRAY_SIZE(rp9_vertices), .vertices = rp9_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATIONRONDPOINT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp9_node_next), .nodes = rp9_node_next}};
 
 static struct map_node rp10_node = {
     .line = {.n_vertices = ARRAY_SIZE(rp10_vertices), .vertices = rp10_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATIONRONDPOINT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp10_node_next), .nodes = rp10_node_next}};
 
 static struct map_node virage1_node = {
     .line = {.n_vertices = ARRAY_SIZE(virage1_vertices), .vertices = virage1_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage1_node_next), .nodes = virage1_node_next}};
 
 static struct map_node virage2_node = {
     .line = {.n_vertices = ARRAY_SIZE(virage2_vertices), .vertices = virage2_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage2_node_next), .nodes = virage2_node_next}};
 
 static struct map_node virage3_node = {
     .line = {.n_vertices = ARRAY_SIZE(virage3_vertices), .vertices = virage3_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage3_node_next), .nodes = virage3_node_next}};
 
 static struct map_node virage4_node = {
     .line = {.n_vertices = ARRAY_SIZE(virage4_vertices), .vertices = virage4_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage4_node_next), .nodes = virage4_node_next}};
 
 static struct map_node virage5_node = {
     .line = {.n_vertices = ARRAY_SIZE(virage5_vertices), .vertices = virage5_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATIONRONDPOINT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage5_node_next), .nodes = virage5_node_next}};
 
 static struct map_node virage6_node = {
     .line = {.n_vertices = ARRAY_SIZE(virage6_vertices), .vertices = virage6_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATIONRONDPOINT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage6_node_next), .nodes = virage6_node_next}};
 
 static struct map_node virage7_node = {
     .line = {.n_vertices = ARRAY_SIZE(virage7_vertices), .vertices = virage7_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATPONT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage7_node_next), .nodes = virage7_node_next}};
 
 static struct map_node virage8_node = {
     .line = {.n_vertices = ARRAY_SIZE(virage8_vertices), .vertices = virage8_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = RESERVATPONT,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage8_node_next), .nodes = virage8_node_next}};
 
 static struct map_node virage9_node = {
     .line = {.n_vertices = ARRAY_SIZE(virage9_vertices), .vertices = virage9_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage9_node_next), .nodes = virage9_node_next}};
 
 static struct map_node virage10_node = {
     .line = {.n_vertices = ARRAY_SIZE(virage10_vertices), .vertices = virage10_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage10_node_next), .nodes = virage10_node_next}};
 
 static struct map_node virage11_node = {
     .line = {.n_vertices = ARRAY_SIZE(virage11_vertices), .vertices = virage11_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage11_node_next), .nodes = virage11_node_next}};
 
 static struct map_node virage12_node = {
     .line = {.n_vertices = ARRAY_SIZE(virage12_vertices), .vertices = virage12_vertices},
     .weight = 0.0f,
-    .passing_fct = suivi_points,
+    .passing_fct = followtraj,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage12_node_next), .nodes = virage12_node_next}};
 

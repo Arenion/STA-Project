@@ -98,7 +98,7 @@ float calculratiosuivitraj(struct position debutsegment,struct position finsegme
 
 }
 
-bool followtraj(void *arg){
+void followtraj(void *arg){
     struct map_node Node =*(struct map_node *)arg; 
     struct position segment[2];
     int8_t vitessemot[2];

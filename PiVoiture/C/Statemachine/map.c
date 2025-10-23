@@ -135,7 +135,7 @@ float find_shortest_path(struct map_node *start, struct map_node *goal,
         int min_dist_i = -1;
         for (int i = 0; i < MAP.n_nodes; ++i)
         {
-            if (!visited[i] && dist[i] < dist[min_dist_i])
+            if (!visited[i] && (min_dist_i == -1 || dist[i] < dist[min_dist_i]))
                 min_dist_i = i;
         }
 

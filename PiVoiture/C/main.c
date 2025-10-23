@@ -74,6 +74,7 @@ int serial_open(const char *portname, int baudrate) {
 
 
 int main(int argc, char *argv[]) {
+    map_init();
     //initialisation des threads
     pthread_t thread_autorisationdepassement;// thread pour l'autorisation de depassement controlleur -> voiture
     pthread_t thread_objectifsuivant;// thread pour l'envoi d'un nouvel objectif controlleur -> voiture
@@ -125,7 +126,7 @@ int main(int argc, char *argv[]) {
     if (FD < 0) {
         return 1;
     }
-    printf("Ouverture de %s à %d bauds réussie.\n", port, baud_raw);
+    printf("Ouverture det %s à %d bauds réussie.\n", port, baud_raw);
 
     pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void *)&autorisationdepassement);
     pthread_create(&thread_objectifsuivant,NULL,receptioncontrolleur,(void *)&objectifsuivant);
@@ -133,10 +134,10 @@ int main(int argc, char *argv[]) {
     //pthread_create(&thread_initialisation,NULL,(void *)&initialisation,NULL);//on attend que le programme du controleur soit bien commencé, on fait ça avec un thread à part afin d'être
     //pthread_join(thread_initialisation,NULL);
     initialisation(6005);
+    sdenvoiposition=startenvoicontrolleur(&envoiposition);
     pthread_create(&thread_envoiposition,NULL,envoideposition,NULL);
     sddemandedereservation =startenvoicontrolleur(&demandereservation);
     sdobjectifsuivant=startenvoicontrolleur(&objectifsuivant);
-    sdenvoiposition=startenvoicontrolleur(&envoiposition);
     //pthread_create(&thread_stop,NULL,receptioncontrolleur,(void*)&demandestop);
     pthread_create(&thread_socketcamera,NULL,lecturedonneescamera,PSEUDOFICHIER);
     //pthread_create(&thread_sendcommandarduino,NULL,navigationthread,NULL);
@@ -233,7 +234,7 @@ int startenvoicontrolleur(struct arg_socket * arg)
     
     adrlect.sin_family=AF_INET;
     adrlect.sin_port=htons(remote_port);
-    adrlect.sin_addr.s_addr=inet_addr(REMOTE_IP);
+    adrlect.sin_addr.s_addr=    (REMOTE_IP);
     
     // Etape 3 : connexion vers le serveur
     

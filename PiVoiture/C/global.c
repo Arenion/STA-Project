@@ -42,6 +42,7 @@ void demandereservation(enum reservation areserver){
     if (derniere_demande && derniere_demande == areserver)
         return;
 
+    printf("Envoie de la demande de réservation.\n");
     // Sinon faire la demande.
     switch (areserver)
     {

@@ -35,9 +35,11 @@ void initturn(int theta, int8_t RPM, int * timetoturn){
     send_command(FD,RPM,-RPM);
 //     usleep(time);
 //     send_command(FD,0,0);
- }
-void *lignedroite(void *arg){
-    char * doneecam = (char *)arg;
+}
+
+void lignedroite(struct map_node *node){
+    // TODO : Change to fit.
+    char * doneecam = (char *)node;
     DEMANDEETAT=DEMANDEORMAL;
 
     while (1){
@@ -98,8 +100,7 @@ float calculratiosuivitraj(struct position debutsegment,struct position finsegme
 
 }
 
-void followtraj(void *arg){
-    struct map_node Node =*(struct map_node *)arg; 
+void followtraj(struct map_node *node){
     struct position segment[2];
     int8_t vitessemot[2];
     pthread_mutex_lock(&MUTEX_POSITION);
@@ -107,7 +108,7 @@ void followtraj(void *arg){
     int yv = POSITION.y;
     pthread_mutex_unlock(&MUTEX_POSITION);
     struct position voiture={xv,yv};
-    struct line LINE =Node.line;
+    struct line LINE =node->line;
     point_line_distance2(LINE, voiture, segment);
     float ratio=calculratiosuivitraj(segment[0],segment[1],voiture);
     pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);

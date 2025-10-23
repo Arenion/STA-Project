@@ -47,34 +47,43 @@ void step_statemachine()
     case PAUSE:
         if (entering)
         {
+            printf("STATEMACHINE: Mise en pause du train.\n");
             stopcommand();
             entering = false;
         }
         if (is_new_objective())
         {
+            printf("STATEMACHINE: Nouvel objectif reçu !\n");
             if (is_objective_stop())
             {
+                printf("STATEMACHINE: Objectif d'arrêt reçu.\n");
                 current_state = PAUSE;
             }
             else
             {
+                printf("STATEMACHINE: Démarrage de la navigation.\n");
                 current_state = NAVIGATION;
             }
             entering = true;
         }
         break;
-    case NAVIGATION:
+        case NAVIGATION:
         if (is_new_objective())
         {
+            printf("STATEMACHINE: Nouvel objectif reçu !\n");
             if (is_objective_stop())
             {
+                printf("STATEMACHINE: Objectif d'arrêt reçu.\n");
                 current_state = PAUSE;
+                entering = true;
+                break;
             }
             else
             {
+                printf("STATEMACHINE: Redémarrage de la navigation.\n");
                 current_state = NAVIGATION;
+                entering = true;
             }
-            entering = true;
         }
         if (step_navigation(entering))
         {

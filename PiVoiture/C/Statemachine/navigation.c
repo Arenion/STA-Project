@@ -28,7 +28,7 @@ bool step_navigation(bool entering)
     static struct position current_objective;
     static struct map_node *node_array[MAX_MAP_SIZE];
     static struct map_node_list path = {
-                .nodes = node_array};
+        .nodes = node_array};
     struct position current_position;
     struct map_node *start_map_node;
     struct map_node *end_map_node;
@@ -39,6 +39,7 @@ bool step_navigation(bool entering)
     switch (current_state)
     {
     case GENERE_ITINERAIRE:
+        printf("NAVIGATION: Début calcul du nouvel itinéraire.\n");
         // Find closest map node to start
         pthread_mutex_lock(&MUTEX_POSITION);
         current_position = POSITION;
@@ -56,24 +57,28 @@ bool step_navigation(bool entering)
 
         current_etape = 0;
         current_state = VERIFRESERVATION;
+        printf("NAVIGATION: Fin calcul du nouvel itinéraire. Lancement de la première étape.\n");
         break;
     case VERIFRESERVATION:
         pthread_mutex_lock(&MUTEX_RESERVATION);
         if (RESERVATION == current_itineraire.nodes[current_etape]->reservation)
         {
+            printf("NAVIGATION: Réservation pour l'étape correcte.\n");
+            pthread_mutex_unlock(&MUTEX_RESERVATION);
             first_reservation_demande = true;
             current_state = ETAPE;
         }
         else
         {
+            pthread_mutex_unlock(&MUTEX_RESERVATION);
             demandereservation(current_itineraire.nodes[current_etape]->reservation);
             if (first_reservation_demande)
             {
+                printf("NAVIGATION: Réservation pour l'étape incorrecte, arrêt de la voiture.\n");
                 stopcommand();
                 first_reservation_demande = false;
             }
         }
-        pthread_mutex_unlock(&MUTEX_RESERVATION);
         break;
     case ETAPE:
         // Check for obstacles
@@ -81,6 +86,7 @@ bool step_navigation(bool entering)
         {
             if (first_obstacle_seen)
             {
+                printf("NAVIGATION: Obstacle détécté ! Arrêt de la voiture.\n");
                 stopcommand();
                 first_obstacle_seen = false;
             }
@@ -91,6 +97,7 @@ bool step_navigation(bool entering)
             first_obstacle_seen = true;
         }
 
+        printf("NAVIGATION: Execution de l'étape.\n");
         // Execute step
         current_itineraire.nodes[current_etape]->passing_fct(current_itineraire.nodes[current_etape]);
 
@@ -98,11 +105,18 @@ bool step_navigation(bool entering)
         pthread_mutex_lock(&MUTEX_POSITION);
         current_position = POSITION;
         pthread_mutex_unlock(&MUTEX_POSITION);
-        if (point_after_segment(current_itineraire.nodes[current_etape]->line.vertices[current_itineraire.nodes[current_etape]->line.n_vertices-2], current_itineraire.nodes[current_etape]->line.vertices[current_itineraire.nodes[current_etape]->line.n_vertices-1], current_position)) // are we arrived to end of step ?
+        // Vérification de si on est derrière le dernier segment du noeud, ou proche du dernier point.
+        if (distance_between_positions(current_itineraire.nodes[current_etape]->line.vertices[current_itineraire.nodes[current_etape]->line.n_vertices - 1], current_position) < 10.0f || point_after_segment(current_itineraire.nodes[current_etape]->line.vertices[current_itineraire.nodes[current_etape]->line.n_vertices - 2], current_itineraire.nodes[current_etape]->line.vertices[current_itineraire.nodes[current_etape]->line.n_vertices - 1], current_position)) // are we arrived to end of step ?
         {
+            printf("NAVIGATION: étape finie.\n");
             current_etape++;
             if (current_etape == current_itineraire.n_nodes)
+            {
+                printf("NAVIGATION: arrivé à destination !\n");
+                annoncereussiteobjectif();
                 return true; // Arrived at destination, telling state machine to go to pause state.
+            }
+            printf("NAVIGATION: passage à la prochaine étape.\n");
 
             // Else we check the new step does not necesitate a new reservation.
             current_state = VERIFRESERVATION;

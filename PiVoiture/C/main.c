@@ -451,7 +451,7 @@ void * envoideposition(void *arg){
     while(!terminateProgram){
         usleep(50000);
         pthread_mutex_unlock(&MUTEX_POSITION);
-        struct position postoenv={POSITION.x,POSITION.y};
+        struct position postoenv=POSITION;
         pthread_mutex_lock(&MUTEX_POSITION);
         char message[MAX_CARS];
         sprintf(message,"%d %d",postoenv.x,postoenv.y);

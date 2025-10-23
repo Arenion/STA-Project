@@ -319,10 +319,6 @@ static struct position virage10_vertices[] = {P66, P65, P51};
 static struct position virage11_vertices[] = {P46, P63, P51};
 static struct position virage12_vertices[] = {P51, P64, P76};
 
-// TODO
-void followtraj(struct map_node *map_node) {};
-void lignedroite(struct map_node *map_node);
-
 // ---- Nodes ----
 // Pre-declaration
 static struct map_node ligne1_node, ligne2_node, ligne3_node, ligne4_node, ligne5_node, ligne6_node, ligne7_node, pont1_node, pont2_node, pont3_node, pont4_node, park1_node, park7_node, park2_node, park8_node, park3_node, park9_node, park4_node, park10_node, park5_node, park11_node, park6_node, park12_node, rp1_node, rp2_node, rp3_node, rp4_node, rp5_node, rp6_node, rp7_node, rp8_node, rp9_node, rp10_node, virage1_node, virage2_node, virage3_node, virage4_node, virage5_node, virage6_node, virage7_node, virage8_node, virage9_node, virage10_node, virage11_node, virage12_node;
@@ -697,7 +693,7 @@ struct map_node_list MAP = {
     .nodes = all_nodes};
 
 // ---- Initialize all nodes weights ----
-float calculate_segment_length(struct position p1, struct position p2)
+float distance_between_positions(struct position p1, struct position p2)
 {
     return sqrtf((float)((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)));
 }
@@ -707,7 +703,7 @@ float calculate_line_lenght(struct line line)
     float r = 0.0f;
     for (int i = 0; i < line.n_vertices - 1; ++i)
     {
-        r += calculate_segment_length(line.vertices[i], line.vertices[i + 1]);
+        r += distance_between_positions(line.vertices[i], line.vertices[i + 1]);
     }
     return r;
 }

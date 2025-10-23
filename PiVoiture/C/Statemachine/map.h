@@ -49,3 +49,5 @@ void map_init();
 struct map_node *closest_map_node(struct position point);
 float find_shortest_path(struct map_node *start, struct map_node *goal,
                          struct map_node_list *path_output);
+
+float distance_between_positions(struct position p1, struct position p2);

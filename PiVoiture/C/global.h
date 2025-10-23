@@ -118,3 +118,4 @@ extern int RPM;
 extern int ANGLE;//Angle de la voiture, issu de l'arduino
 
 void demandereservation(enum reservation areserver);
+void annoncereussiteobjectif();

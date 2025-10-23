@@ -105,6 +105,7 @@ bool step_navigation(bool entering)
         pthread_mutex_lock(&MUTEX_POSITION);
         current_position = POSITION;
         pthread_mutex_unlock(&MUTEX_POSITION);
+        // TODO : gérer le point d'arrivé.
         // Vérification de si on est derrière le dernier segment du noeud, ou proche du dernier point.
         if (distance_between_positions(current_itineraire.nodes[current_etape]->line.vertices[current_itineraire.nodes[current_etape]->line.n_vertices - 1], current_position) < 10.0f || point_after_segment(current_itineraire.nodes[current_etape]->line.vertices[current_itineraire.nodes[current_etape]->line.n_vertices - 2], current_itineraire.nodes[current_etape]->line.vertices[current_itineraire.nodes[current_etape]->line.n_vertices - 1], current_position)) // are we arrived to end of step ?
         {

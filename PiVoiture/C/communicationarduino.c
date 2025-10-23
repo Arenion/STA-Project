@@ -38,39 +38,13 @@ void initturn(int theta, int8_t RPM, int * timetoturn){
 }
 
 void lignedroite(struct map_node *node){
-    // TODO : Change to fit.
-    //char * doneecam = (char *)node;
-    DEMANDEETAT=DEMANDEORMAL;
-    while (1){
-	usleep(100000);
-    //if(ETAT=NORMAL){
-	printf("etat normal");
     pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
 	printf("%f, %d\n",INFORMATIONARDUINO.ratio,INFORMATIONARDUINO.RPM);
     ratRPMtovitmot(INFORMATIONARDUINO.ratio,INFORMATIONARDUINO.RPM,vitessemot);
     pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
     send_command(FD,vitessemot[0],vitessemot[1]);
-
-    //   }
-    // if(ETAT=DEPPASSEMENT){
-    //     pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
-    //     turn(-45,INFORMATIONARDUINO.RPM);
-    //     advance(1.4*200,INFORMATIONARDUINO.RPM);
-    //     turn(45,INFORMATIONARDUINO.RPM);
-    //     advance(100,INFORMATIONARDUINO.RPM);
-    //     turn(45,INFORMATIONARDUINO.RPM);
-    //     advance(1.4*200,INFORMATIONARDUINO.RPM);
-    //     turn(-45,INFORMATIONARDUINO.RPM);
-    //     pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
-
-
-
-    // }
-        //if(ETAT=STOP){
-        //    send_command(FD,0,0);
-       // }
-     }
 }
+
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]){
     float erreur=ratio-0.5;
     if (erreur>=0){
@@ -96,7 +70,6 @@ float calculratiosuivitraj(struct position debutsegment,struct position finsegme
     int scal = (vecx*(xv-xd)+vecy*(yv-yd));
     float ratio = 0.5+(scal/abs(scal))*point_segment_distance2(debutsegment,finsegment,voiture)/205;
     return ratio;
-
 }
 
 void followtraj(struct map_node * NodeP){

@@ -54,9 +54,17 @@ bool step_navigation(bool entering)
         // Find shortest node path
         find_shortest_path(start_map_node, end_map_node, &path);
 
+        printf("NAVIGATION: Fin calcul du nouvel itinéraire : ");
+        for (int i = 0; i < path.n_nodes; ++i)
+        {
+            printf(path.nodes[i]->name);
+            printf(" -->");
+        }
+        printf(" ARRIVEE;\n");
+
         current_etape = 0;
+        printf("NAVIGATION : Début étape '%s'\n", path.nodes[current_etape]->name);
         current_state = VERIFRESERVATION;
-        printf("NAVIGATION: Fin calcul du nouvel itinéraire. Lancement de la première étape.\n");
         break;
     case VERIFRESERVATION:
         pthread_mutex_lock(&MUTEX_RESERVATION);
@@ -108,7 +116,7 @@ bool step_navigation(bool entering)
         // Vérification de si on est derrière le dernier segment du noeud, ou proche du dernier point.
         if (distance_between_positions(path.nodes[current_etape]->line.vertices[path.nodes[current_etape]->line.n_vertices - 1], current_position) < 10.0f || point_after_segment(path.nodes[current_etape]->line.vertices[path.nodes[current_etape]->line.n_vertices - 2], path.nodes[current_etape]->line.vertices[path.nodes[current_etape]->line.n_vertices - 1], current_position)) // are we arrived to end of step ?
         {
-            printf("NAVIGATION: étape finie.\n");
+            printf("NAVIGATION: étape '%s' finie.\n", path.nodes[current_etape]->name);
             current_etape++;
             if (current_etape == path.n_nodes)
             {
@@ -116,7 +124,7 @@ bool step_navigation(bool entering)
                 annoncereussiteobjectif();
                 return true; // Arrived at destination, telling state machine to go to pause state.
             }
-            printf("NAVIGATION: passage à la prochaine étape.\n");
+            printf("NAVIGATION: passage à l'étape '%s'\n", path.nodes[current_etape]->name);
 
             // Else we check the new step does not necesitate a new reservation.
             current_state = VERIFRESERVATION;

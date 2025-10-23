@@ -376,6 +376,7 @@ static struct map_node *virage12_node_next[] = {&ligne6_node};
 
 // Lignes
 static struct map_node ligne1_node = {
+    .name = "ligne1",
     .line = {.n_vertices = ARRAY_SIZE(ligne1_vertices), .vertices = ligne1_vertices},
     .weight = 0.0f,
     .passing_fct = lignedroite,
@@ -383,6 +384,7 @@ static struct map_node ligne1_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(ligne1_node_next), .nodes = ligne1_node_next}};
 
 static struct map_node ligne2_node = {
+    .name = "ligne2",
     .line = {.n_vertices = ARRAY_SIZE(ligne2_vertices), .vertices = ligne2_vertices},
     .weight = 0.0f,
     .passing_fct = lignedroite,
@@ -390,6 +392,7 @@ static struct map_node ligne2_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(ligne2_node_next), .nodes = ligne2_node_next}};
 
 static struct map_node ligne3_node = {
+    .name = "ligne3",
     .line = {.n_vertices = ARRAY_SIZE(ligne3_vertices), .vertices = ligne3_vertices},
     .weight = 0.0f,
     .passing_fct = lignedroite,
@@ -397,6 +400,7 @@ static struct map_node ligne3_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(ligne3_node_next), .nodes = ligne3_node_next}};
 
 static struct map_node ligne4_node = {
+    .name = "ligne4",
     .line = {.n_vertices = ARRAY_SIZE(ligne4_vertices), .vertices = ligne4_vertices},
     .weight = 0.0f,
     .passing_fct = lignedroite,
@@ -404,6 +408,7 @@ static struct map_node ligne4_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(ligne4_node_next), .nodes = ligne4_node_next}};
 
 static struct map_node ligne5_node = {
+    .name = "ligne5",
     .line = {.n_vertices = ARRAY_SIZE(ligne5_vertices), .vertices = ligne5_vertices},
     .weight = 0.0f,
     .passing_fct = lignedroite,
@@ -411,6 +416,7 @@ static struct map_node ligne5_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(ligne5_node_next), .nodes = ligne5_node_next}};
 
 static struct map_node ligne6_node = {
+    .name = "ligne6",
     .line = {.n_vertices = ARRAY_SIZE(ligne6_vertices), .vertices = ligne6_vertices},
     .weight = 0.0f,
     .passing_fct = lignedroite,
@@ -418,6 +424,7 @@ static struct map_node ligne6_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(ligne6_node_next), .nodes = ligne6_node_next}};
 
 static struct map_node ligne7_node = {
+    .name = "ligne7",
     .line = {.n_vertices = ARRAY_SIZE(ligne7_vertices), .vertices = ligne7_vertices},
     .weight = 0.0f,
     .passing_fct = lignedroite,
@@ -425,6 +432,7 @@ static struct map_node ligne7_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(ligne7_node_next), .nodes = ligne7_node_next}};
 
 static struct map_node pont1_node = {
+    .name = "pont1",
     .line = {.n_vertices = ARRAY_SIZE(pont1_vertices), .vertices = pont1_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -432,6 +440,7 @@ static struct map_node pont1_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(pont1_node_next), .nodes = pont1_node_next}};
 
 static struct map_node pont2_node = {
+    .name = "pont2",
     .line = {.n_vertices = ARRAY_SIZE(pont2_vertices), .vertices = pont2_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -439,6 +448,7 @@ static struct map_node pont2_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(pont2_node_next), .nodes = pont2_node_next}};
 
 static struct map_node pont3_node = {
+    .name = "pont3",
     .line = {.n_vertices = ARRAY_SIZE(pont3_vertices), .vertices = pont3_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -446,6 +456,7 @@ static struct map_node pont3_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(pont3_node_next), .nodes = pont3_node_next}};
 
 static struct map_node pont4_node = {
+    .name = "pont4",
     .line = {.n_vertices = ARRAY_SIZE(pont4_vertices), .vertices = pont4_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -453,6 +464,7 @@ static struct map_node pont4_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(pont4_node_next), .nodes = pont4_node_next}};
 
 static struct map_node park1_node = {
+    .name = "park1",
     .line = {.n_vertices = ARRAY_SIZE(park1_vertices), .vertices = park1_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -460,6 +472,7 @@ static struct map_node park1_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(park1_node_next), .nodes = park1_node_next}};
 
 static struct map_node park7_node = {
+    .name = "park7",
     .line = {.n_vertices = ARRAY_SIZE(park7_vertices), .vertices = park7_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -467,6 +480,7 @@ static struct map_node park7_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(park7_node_next), .nodes = park7_node_next}};
 
 static struct map_node park2_node = {
+    .name = "park2",
     .line = {.n_vertices = ARRAY_SIZE(park2_vertices), .vertices = park2_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -474,6 +488,7 @@ static struct map_node park2_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(park2_node_next), .nodes = park2_node_next}};
 
 static struct map_node park8_node = {
+    .name = "park8",
     .line = {.n_vertices = ARRAY_SIZE(park8_vertices), .vertices = park8_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -481,6 +496,7 @@ static struct map_node park8_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(park8_node_next), .nodes = park8_node_next}};
 
 static struct map_node park3_node = {
+    .name = "park3",
     .line = {.n_vertices = ARRAY_SIZE(park3_vertices), .vertices = park3_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -488,6 +504,7 @@ static struct map_node park3_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(park3_node_next), .nodes = park3_node_next}};
 
 static struct map_node park9_node = {
+    .name = "park9",
     .line = {.n_vertices = ARRAY_SIZE(park9_vertices), .vertices = park9_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -495,6 +512,7 @@ static struct map_node park9_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(park9_node_next), .nodes = park9_node_next}};
 
 static struct map_node park4_node = {
+    .name = "park4",
     .line = {.n_vertices = ARRAY_SIZE(park4_vertices), .vertices = park4_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -502,6 +520,7 @@ static struct map_node park4_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(park4_node_next), .nodes = park4_node_next}};
 
 static struct map_node park10_node = {
+    .name = "park10",
     .line = {.n_vertices = ARRAY_SIZE(park10_vertices), .vertices = park10_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -509,6 +528,7 @@ static struct map_node park10_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(park10_node_next), .nodes = park10_node_next}};
 
 static struct map_node park5_node = {
+    .name = "park5",
     .line = {.n_vertices = ARRAY_SIZE(park5_vertices), .vertices = park5_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -516,6 +536,7 @@ static struct map_node park5_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(park5_node_next), .nodes = park5_node_next}};
 
 static struct map_node park11_node = {
+    .name = "park11",
     .line = {.n_vertices = ARRAY_SIZE(park11_vertices), .vertices = park11_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -523,6 +544,7 @@ static struct map_node park11_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(park11_node_next), .nodes = park11_node_next}};
 
 static struct map_node park6_node = {
+    .name = "park6",
     .line = {.n_vertices = ARRAY_SIZE(park6_vertices), .vertices = park6_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -530,6 +552,7 @@ static struct map_node park6_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(park6_node_next), .nodes = park6_node_next}};
 
 static struct map_node park12_node = {
+    .name = "park12",
     .line = {.n_vertices = ARRAY_SIZE(park12_vertices), .vertices = park12_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -537,6 +560,7 @@ static struct map_node park12_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(park12_node_next), .nodes = park12_node_next}};
 
 static struct map_node rp1_node = {
+    .name = "rp1",
     .line = {.n_vertices = ARRAY_SIZE(rp1_vertices), .vertices = rp1_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -544,6 +568,7 @@ static struct map_node rp1_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp1_node_next), .nodes = rp1_node_next}};
 
 static struct map_node rp2_node = {
+    .name = "rp2",
     .line = {.n_vertices = ARRAY_SIZE(rp2_vertices), .vertices = rp2_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -551,6 +576,7 @@ static struct map_node rp2_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp2_node_next), .nodes = rp2_node_next}};
 
 static struct map_node rp3_node = {
+    .name = "rp3",
     .line = {.n_vertices = ARRAY_SIZE(rp3_vertices), .vertices = rp3_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -558,6 +584,7 @@ static struct map_node rp3_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp3_node_next), .nodes = rp3_node_next}};
 
 static struct map_node rp4_node = {
+    .name = "rp4",
     .line = {.n_vertices = ARRAY_SIZE(rp4_vertices), .vertices = rp4_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -565,6 +592,7 @@ static struct map_node rp4_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp4_node_next), .nodes = rp4_node_next}};
 
 static struct map_node rp5_node = {
+    .name = "rp5",
     .line = {.n_vertices = ARRAY_SIZE(rp5_vertices), .vertices = rp5_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -572,6 +600,7 @@ static struct map_node rp5_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp5_node_next), .nodes = rp5_node_next}};
 
 static struct map_node rp6_node = {
+    .name = "rp6",
     .line = {.n_vertices = ARRAY_SIZE(rp6_vertices), .vertices = rp6_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -579,6 +608,7 @@ static struct map_node rp6_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp6_node_next), .nodes = rp6_node_next}};
 
 static struct map_node rp7_node = {
+    .name = "rp7",
     .line = {.n_vertices = ARRAY_SIZE(rp7_vertices), .vertices = rp7_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -586,6 +616,7 @@ static struct map_node rp7_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp7_node_next), .nodes = rp7_node_next}};
 
 static struct map_node rp8_node = {
+    .name = "rp8",
     .line = {.n_vertices = ARRAY_SIZE(rp8_vertices), .vertices = rp8_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -593,6 +624,7 @@ static struct map_node rp8_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp8_node_next), .nodes = rp8_node_next}};
 
 static struct map_node rp9_node = {
+    .name = "rp9",
     .line = {.n_vertices = ARRAY_SIZE(rp9_vertices), .vertices = rp9_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -600,6 +632,7 @@ static struct map_node rp9_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp9_node_next), .nodes = rp9_node_next}};
 
 static struct map_node rp10_node = {
+    .name = "rp10",
     .line = {.n_vertices = ARRAY_SIZE(rp10_vertices), .vertices = rp10_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -607,6 +640,7 @@ static struct map_node rp10_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(rp10_node_next), .nodes = rp10_node_next}};
 
 static struct map_node virage1_node = {
+    .name = "virage1",
     .line = {.n_vertices = ARRAY_SIZE(virage1_vertices), .vertices = virage1_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -614,6 +648,7 @@ static struct map_node virage1_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage1_node_next), .nodes = virage1_node_next}};
 
 static struct map_node virage2_node = {
+    .name = "virage2",
     .line = {.n_vertices = ARRAY_SIZE(virage2_vertices), .vertices = virage2_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -621,6 +656,7 @@ static struct map_node virage2_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage2_node_next), .nodes = virage2_node_next}};
 
 static struct map_node virage3_node = {
+    .name = "virage3",
     .line = {.n_vertices = ARRAY_SIZE(virage3_vertices), .vertices = virage3_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -628,6 +664,7 @@ static struct map_node virage3_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage3_node_next), .nodes = virage3_node_next}};
 
 static struct map_node virage4_node = {
+    .name = "virage4",
     .line = {.n_vertices = ARRAY_SIZE(virage4_vertices), .vertices = virage4_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -635,6 +672,7 @@ static struct map_node virage4_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage4_node_next), .nodes = virage4_node_next}};
 
 static struct map_node virage5_node = {
+    .name = "virage5",
     .line = {.n_vertices = ARRAY_SIZE(virage5_vertices), .vertices = virage5_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -642,6 +680,7 @@ static struct map_node virage5_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage5_node_next), .nodes = virage5_node_next}};
 
 static struct map_node virage6_node = {
+    .name = "virage6",
     .line = {.n_vertices = ARRAY_SIZE(virage6_vertices), .vertices = virage6_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -649,6 +688,7 @@ static struct map_node virage6_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage6_node_next), .nodes = virage6_node_next}};
 
 static struct map_node virage7_node = {
+    .name = "virage7",
     .line = {.n_vertices = ARRAY_SIZE(virage7_vertices), .vertices = virage7_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -656,6 +696,7 @@ static struct map_node virage7_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage7_node_next), .nodes = virage7_node_next}};
 
 static struct map_node virage8_node = {
+    .name = "virage8",
     .line = {.n_vertices = ARRAY_SIZE(virage8_vertices), .vertices = virage8_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -663,6 +704,7 @@ static struct map_node virage8_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage8_node_next), .nodes = virage8_node_next}};
 
 static struct map_node virage9_node = {
+    .name = "virage9",
     .line = {.n_vertices = ARRAY_SIZE(virage9_vertices), .vertices = virage9_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -670,6 +712,7 @@ static struct map_node virage9_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage9_node_next), .nodes = virage9_node_next}};
 
 static struct map_node virage10_node = {
+    .name = "virage10",
     .line = {.n_vertices = ARRAY_SIZE(virage10_vertices), .vertices = virage10_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -677,6 +720,7 @@ static struct map_node virage10_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage10_node_next), .nodes = virage10_node_next}};
 
 static struct map_node virage11_node = {
+    .name = "virage11",
     .line = {.n_vertices = ARRAY_SIZE(virage11_vertices), .vertices = virage11_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,
@@ -684,6 +728,7 @@ static struct map_node virage11_node = {
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage11_node_next), .nodes = virage11_node_next}};
 
 static struct map_node virage12_node = {
+    .name = "virage12",
     .line = {.n_vertices = ARRAY_SIZE(virage12_vertices), .vertices = virage12_vertices},
     .weight = 0.0f,
     .passing_fct = followtraj,

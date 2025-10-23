@@ -36,6 +36,7 @@ struct map_node_list
 
 struct map_node
 {
+    char *name;
     struct line line; // The line of the node. It contains the start and end points, going in the clockwise direction.
     float weight;
     void (*passing_fct)(struct map_node *map_node);

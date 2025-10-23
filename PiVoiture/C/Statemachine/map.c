@@ -697,7 +697,7 @@ struct map_node_list MAP = {
     .nodes = all_nodes};
 
 // ---- Initialize all nodes weights ----
-float calculate_segment_length(struct position p1, struct position p2)
+float distance_between_positions(struct position p1, struct position p2)
 {
     return sqrtf((float)((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)));
 }
@@ -707,7 +707,7 @@ float calculate_line_lenght(struct line line)
     float r = 0.0f;
     for (int i = 0; i < line.n_vertices - 1; ++i)
     {
-        r += calculate_segment_length(line.vertices[i], line.vertices[i + 1]);
+        r += distance_between_positions(line.vertices[i], line.vertices[i + 1]);
     }
     return r;
 }

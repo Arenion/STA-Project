@@ -31,7 +31,7 @@ void initturn(int theta, int8_t RPM, int * timetoturn){
     float vitesse= RPM*rayon_roue/60;//conversion de RPM en vitesse en mm/s
     float omega= 2*vitesse/largeur_voiture;//vitesse angulaire de la voiture en rad/s
     float thetarad =theta*3.14/180;//conversion de l'angle en degrés en radians
-    *timetoturn =(int)(100000*theta/omega);
+    *timetoturn =(int)(100000*thetarad/omega);
     send_command(FD,RPM,-RPM);
 //     usleep(time);
 //     send_command(FD,0,0);
@@ -39,7 +39,7 @@ void initturn(int theta, int8_t RPM, int * timetoturn){
 
 void lignedroite(struct map_node *node){
     // TODO : Change to fit.
-    char * doneecam = (char *)node;
+    //char * doneecam = (char *)node;
     DEMANDEETAT=DEMANDEORMAL;
     while (1){
 	usleep(100000);
@@ -108,7 +108,7 @@ void followtraj(struct map_node * NodeP){
     int yv = POSITION.y;
     pthread_mutex_unlock(&MUTEX_POSITION);
     struct position voiture={xv,yv};
-    struct line LINE =node->line;
+    struct line LINE =Node.line;
     point_line_distance2(LINE, voiture, segment);
     float ratio=calculratiosuivitraj(segment[0],segment[1],voiture);
     pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);

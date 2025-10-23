@@ -89,7 +89,7 @@ struct position{
 #define POINT_STOP ((struct position){-1, -1})
 #define OBJECTIF_STOP POINT_STOP
 
-extern struct infoarduino INFORMATIONARDUINO;
+extern struct infoarduino INFORMATIONARDUINO;                  
 extern pthread_mutex_t MUTEX_INFORMATIONARDUINO;
 
 extern struct position NEXTOBJECTIF;

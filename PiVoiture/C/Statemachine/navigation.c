@@ -68,7 +68,7 @@ bool step_navigation(bool entering)
         break;
     case VERIFRESERVATION:
         pthread_mutex_lock(&MUTEX_RESERVATION);
-        if (RESERVATION == path.nodes[current_etape]->reservation)
+        if (RESERVATION == path.nodes[current_etape]->reservation || true)
         {
             printf("NAVIGATION: Réservation pour l'étape correcte.\n");
             pthread_mutex_unlock(&MUTEX_RESERVATION);

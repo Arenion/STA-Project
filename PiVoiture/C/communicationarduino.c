@@ -38,6 +38,7 @@ void initturn(int theta, int8_t RPM, int * timetoturn){
 }
 
 void lignedroite(struct map_node *node){
+	printf("ligne droite\n");
     pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
 	printf("%f, %d\n",INFORMATIONARDUINO.ratio,INFORMATIONARDUINO.RPM);
     ratRPMtovitmot(INFORMATIONARDUINO.ratio,INFORMATIONARDUINO.RPM,vitessemot);
@@ -47,11 +48,11 @@ void lignedroite(struct map_node *node){
 
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]){
     float erreur=ratio-0.5;
-    if (erreur>=0){
+    if (erreur<=0){
         vitessemot[0]=(int8_t)RPM;
         vitessemot[1]=(int8_t)(RPM*(1-3*erreur));
     };
-    if(erreur<0){
+    if(erreur>0){
         vitessemot[0]=(int8_t)(RPM*(1+3*erreur));
         vitessemot[1]=(int8_t)(RPM);
     };
@@ -73,6 +74,7 @@ float calculratiosuivitraj(struct position debutsegment,struct position finsegme
 }
 
 void followtraj(struct map_node * NodeP){
+	printf("suivi de points\n");
     struct map_node Node =*NodeP;
     struct position segment[2];
     int8_t vitessemot[2];

@@ -99,8 +99,10 @@ void step_statemachine()
 }
 
 void *navigationthread(void * arg){// fonction à appeler via pthread_create dans le main
-    while (!terminateProgram){
-        usleep(1000);// on met un petit délai pour éviter des problèmes 
+    usleep(1000000);
+	printf("demarrage de la stepmachine\n");
+	while (!terminateProgram){
+        usleep(50000);// on met un petit délai pour éviter des problèmes 
         step_statemachine();//fonction principale
 }
 }

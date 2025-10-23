@@ -129,22 +129,24 @@ int main(int argc, char *argv[]) {
     }
     printf("Ouverture det %s à %d bauds réussie.\n", port, baud_raw);
     /* On fait ces thread avant l'attente de lancement du controleur afin  que celui ci puisse nous envoyer des données*/
-    pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void *)&autorisationdepassement);// thread pour recevoir l'autorisation de depassement du controleur: !!! GERE LE PASSAGE SUR UNE ZONE RESERVABLE!!!
-    pthread_create(&thread_objectifsuivant,NULL,receptioncontrolleur,(void *)&objectifsuivant);// thread pour recevoir les objectifs suivant du controlleurs
+    //pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void *)&autorisationdepassement);// thread pour recevoir l'autorisation de depassement du controleur: !!! GERE LE PASSAGE SUR UNE ZONE RESERVABLE!!!
+    //pthread_create(&thread_objectifsuivant,NULL,receptioncontrolleur,(void *)&objectifsuivant);// thread pour recevoir les objectifs suivant du controlleurs
     pthread_create(&thread_getposition,NULL,receptionposition,NULL);//pour recevoir données du marvelmind
-    pthread_create(&thread_angle,NULL,obtentionangle,NULL);
-
-    initialisation(6005);
-    sdenvoiposition=startenvoicontrolleur(&envoiposition);
-    pthread_create(&thread_envoiposition,NULL,envoideposition,NULL);
-    sddemandedereservation =startenvoicontrolleur(&demandereservation);
-    sdobjectifsuivant=startenvoicontrolleur(&objectifsuivant);
+    //pthread_create(&thread_angle,NULL,obtentionangle,NULL);
+	//send_command(FD,80,80);
+	//usleep(1000000);
+	//send_command(FD,0,0);
+    //initialisation(6005);
+    //sdenvoiposition=startenvoicontrolleur(&envoiposition);
+    //pthread_create(&thread_envoiposition,NULL,envoideposition,NULL);
+    //sddemandedereservation =startenvoicontrolleur(&demandereservation);
+    //sdobjectifsuivant=startenvoicontrolleur(&objectifsuivant);
     //pthread_create(&thread_stop,NULL,receptioncontrolleur,(void*)&demandestop);
     pthread_create(&thread_socketcamera,NULL,lecturedonneescamera,PSEUDOFICHIER);
-    pthread_create(&thread_navigation,NULL,navigationthread,NULL);
-    
-   //pthread_join(thread_stop,NULL);
+    navigationthread(NULL); 
+    //pthread_join(thread_stop,NULL);
     //pthread_join(thread_sendcommandarduino,NULL);
+    pthread_join(thread_getposition,NULL);
     pthread_join(thread_socketcamera,NULL);
     pthread_join(thread_autorisationdepassement,NULL);
     pthread_join(thread_objectifsuivant,NULL);
@@ -474,6 +476,7 @@ struct __attribute__((packed)) PositionMsg {
 static void CtrlHandler(int signum) { (void)signum; terminateProgram = true; }
 
 void* receptionposition(void *arg ) {
+	pthread_mutex_lock(&MUTEX_POSITION);
     signal(SIGINT,  CtrlHandler);
     signal(SIGQUIT, CtrlHandler);
 
@@ -491,11 +494,12 @@ void* receptionposition(void *arg ) {
     struct PositionMsg   goal;      // objectif reçu
     bool valid_this_cycle = false;
     int n = 0;
-
+	bool premfois =true;
     // ---- Boucle principale ----
     while ((!terminateProgram) && (!hedge->terminationRequired)) {
         usleep(50000); // 50 ms
 
+	//printf("Boucle principale\n");
         valid_this_cycle = false;
         if (getPositionFromMarvelmindHedge(hedge, &new_pos)) {
             if (new_pos.address == MY_HEDGE && new_pos.z != 0) {
@@ -509,8 +513,12 @@ void* receptionposition(void *arg ) {
 
             // Envoi de la position au contrôleur
             if (valid_this_cycle) {
+		    if (premfois){
+			    premfois=false;
+		    pthread_mutex_unlock(&MUTEX_POSITION);
+		    }
                 pthread_mutex_lock(&MUTEX_POSITION);
-                //printf("X: %d  Y: %d", POSITION.x,POSITION.y);
+                printf("X: %d  Y: %d", POSITION.x,POSITION.y);
                 POSITION.x = new_pos.x;
                 POSITION.y = new_pos.y;
                 pthread_mutex_unlock(&MUTEX_POSITION);

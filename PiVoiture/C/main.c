@@ -7,7 +7,7 @@
 #include "Statemachine/statemachine.h"
 #include "global.c"
 #include "communicationarduino.h"
-
+#include "Statemachine/map.h"
 void *lecturedonneescamera(void *arg);//connexion de socket de la caméra pour lire données: caméra -> voiture
 void *receptioncontrolleur(void * argu);// fonction permettant de recevoir des données du controlleur: controlleur -> voiture
 int startenvoicontrolleur(struct arg_socket * arg);//fonction envoyant des données 
@@ -234,7 +234,7 @@ int startenvoicontrolleur(struct arg_socket * arg)
     
     adrlect.sin_family=AF_INET;
     adrlect.sin_port=htons(remote_port);
-    adrlect.sin_addr.s_addr=    (REMOTE_IP);
+    adrlect.sin_addr.s_addr=inet_addr(REMOTE_IP);
     
     // Etape 3 : connexion vers le serveur
     

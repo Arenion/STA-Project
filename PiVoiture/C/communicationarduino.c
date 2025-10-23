@@ -36,10 +36,8 @@ void initturn(int theta, int8_t RPM, int * timetoturn){
 //     usleep(time);
 //     send_command(FD,0,0);
  }
-void *lignedroite(void *arg){
-    char * doneecam = (char *)arg;
+void lignedroite(struct map_node *map_node){
     DEMANDEETAT=DEMANDEORMAL;
-
     while (1){
 	usleep(100000);
     //if(ETAT=NORMAL){
@@ -98,8 +96,8 @@ float calculratiosuivitraj(struct position debutsegment,struct position finsegme
 
 }
 
-void followtraj(void *arg){
-    struct map_node Node =*(struct map_node *)arg; 
+void followtraj(struct map_node * NodeP){
+    struct map_node Node =*NodeP;
     struct position segment[2];
     int8_t vitessemot[2];
     pthread_mutex_lock(&MUTEX_POSITION);

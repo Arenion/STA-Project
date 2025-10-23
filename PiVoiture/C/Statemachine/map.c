@@ -320,7 +320,7 @@ static struct position virage11_vertices[] = {P46, P63, P51};
 static struct position virage12_vertices[] = {P51, P64, P76};
 
 // TODO
-void followtraj(struct map_node *map_node) {};
+// void followtraj(struct map_node *map_node) {};
 void lignedroite(struct map_node *map_node);
 
 // ---- Nodes ----

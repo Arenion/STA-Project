@@ -16,7 +16,7 @@ void *receptionposition(void * arg);//fonction permettant de recevoir la postion
 void gestionfinprogramme();
 void *envoideposition(void * arg);
 void initialisation(int port);
-
+void * obtentionangle(void * arg);
 
 // Fonction pour convertir un entier baudrate → valeur termios
 int get_baudrate(int baud) {
@@ -82,11 +82,12 @@ int main(int argc, char *argv[]) {
     // pthread_t thrad_reussiteobjectif; // thread annonçant la réussite du dernier objectif voiture -> controlleur
     pthread_t thread_actuatlisationtronçon;// thread actualisant le tronçon de la voiture à l'aide d'informations de la caméra voiture -> contnrolleur
     pthread_t thread_socketcamera;
-    pthread_t thread_sendcommandarduino;
+    pthread_t thread_navigation;//thread gérant la navigation
     pthread_t thread_getposition;//thread permettant d'obtenir la position via le marvelmind
     pthread_t thread_stop; //thread gérant une commande stop du controlleur controlleur -> voiture 
     pthread_t thread_envoiposition;//thread gérant l'envoi de la position voitur -> controlleur
     pthread_t thread_initialisation;//thread gérant l'initialisation du programme
+    pthread_t thread_angle;//thread gérant l'obtention de l'angle depuis l'arduino
 
     //initialisation des arguments des threads
     struct arg_socket autorisationdepassement={6000, "0"};// pour le depassement on note 0 pour un refus et 1 pour une autorisation
@@ -127,12 +128,12 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     printf("Ouverture det %s à %d bauds réussie.\n", port, baud_raw);
-
-    pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void *)&autorisationdepassement);
-    pthread_create(&thread_objectifsuivant,NULL,receptioncontrolleur,(void *)&objectifsuivant);
+    /* On fait ces thread avant l'attente de lancement du controleur afin  que celui ci puisse nous envoyer des données*/
+    pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void *)&autorisationdepassement);// thread pour recevoir l'autorisation de depassement du controleur: !!! GERE LE PASSAGE SUR UNE ZONE RESERVABLE!!!
+    pthread_create(&thread_objectifsuivant,NULL,receptioncontrolleur,(void *)&objectifsuivant);// thread pour recevoir les objectifs suivant du controlleurs
     pthread_create(&thread_getposition,NULL,receptionposition,NULL);//pour recevoir données du marvelmind
-    //pthread_create(&thread_initialisation,NULL,(void *)&initialisation,NULL);//on attend que le programme du controleur soit bien commencé, on fait ça avec un thread à part afin d'être
-    //pthread_join(thread_initialisation,NULL);
+    pthread_create(&thread_angle,NULL,obtentionangle,NULL);
+
     initialisation(6005);
     sdenvoiposition=startenvoicontrolleur(&envoiposition);
     pthread_create(&thread_envoiposition,NULL,envoideposition,NULL);
@@ -140,7 +141,7 @@ int main(int argc, char *argv[]) {
     sdobjectifsuivant=startenvoicontrolleur(&objectifsuivant);
     //pthread_create(&thread_stop,NULL,receptioncontrolleur,(void*)&demandestop);
     pthread_create(&thread_socketcamera,NULL,lecturedonneescamera,PSEUDOFICHIER);
-    //pthread_create(&thread_sendcommandarduino,NULL,navigationthread,NULL);
+    pthread_create(&thread_navigation,NULL,navigationthread,NULL);
     
    //pthread_join(thread_stop,NULL);
     //pthread_join(thread_sendcommandarduino,NULL);
@@ -610,4 +611,7 @@ void initialisation(int port)
     }
     
   }
+}
+void * obtentionangle(void * arg){
+
 }

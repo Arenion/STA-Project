@@ -508,7 +508,7 @@ void* receptionposition(void *arg ) {
             // Envoi de la position au contrôleur
             if (valid_this_cycle) {
                 pthread_mutex_lock(&MUTEX_POSITION);
-                printf("X: %d  Y: %d", POSITION.x,POSITION.y);
+                //printf("X: %d  Y: %d", POSITION.x,POSITION.y);
                 POSITION.x = new_pos.x;
                 POSITION.y = new_pos.y;
                 pthread_mutex_unlock(&MUTEX_POSITION);
@@ -570,42 +570,45 @@ void initialisation(int port)
     
     // Etape 4 : on se met l'ecoute des demandes des connexions
     printf("attente de connexion au controlleur \n");
-    listen(se, 8);
-    printf("Connexion au controleur réussi !\n");
-    while (1)
-    {
+    accept(se,NULL,NULL);
+    printf("Connexion Réussi\n");
+    return;
+//     while (1)
+//     {
         
-    sd1=accept(se, NULL, NULL); //Je ne recupere pas l'adresse de celui qui ouvre la connexion
-    // printf("Nouvelle connexion accepte par le serveur !!!\n");
+//     sd1=accept(se, NULL, NULL); //Je ne recupere pas l'adresse de celui qui ouvre la connexion
+//     // printf("Nouvelle connexion accepte par le serveur !!!\n");
     
-    pid=fork(); //Creation du processus fils
+//     pid=fork(); //Creation du processus fils
     
-    //Etape 4
+//     //Etape 4
     
-    if (pid) {
-        //Je suis dans le pere
-        close(sd1); // Je ferme la socket de dialogue utilisee par le fils
-        nbfils++;
-    }
+//     if (pid) {
+//         //Je suis dans le pere
+//         close(sd1); // Je ferme la socket de dialogue utilisee par le fils
+//         nbfils++;
+//     }
     
-    else
-    {
-        //Je suis dans le fils
-    close(se);
-    do
-    {
-    //(recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen);
+//     else
+//     {
+//         //Je suis dans le fils
+//     close(se);
+//     do
+//     {
+//     //(recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen);
 
-    nbcars=recv(sd1, buff,MAX_CARS, 0) ; // Les deux NULL a la fin indique que je ne veux pas recuperer l'adresse de l'ecrivain
+//     nbcars=recv(sd1, buff,MAX_CARS, 0) ; // Les deux NULL a la fin indique que je ne veux pas recuperer l'adresse de l'ecrivain
 
-    if (nbcars){
-        close(se);
-        return;
-        }   
+//     if (nbcars){
+//         close(se);
+//         printf("Connexion au controleur réussi !\n");
+
+//         return;
+//         }   
     
-    }
-    while (1);
-    }
+//     }
+//     while (1);
+//     }
     
-  }
+//   }
 }

@@ -570,7 +570,7 @@ void initialisation(int port)
     
     // Etape 4 : on se met l'ecoute des demandes des connexions
     printf("attente de connexion au controlleur \n");
-    accept(se,NULL,NULL);
+    listen(se, 8);
     while (1)
     {
         
@@ -599,8 +599,8 @@ void initialisation(int port)
 
     if (nbcars){
         close(se);
-        printf("Connexion au controleur réussi !\n");
-
+        
+        printf("connexion réussi\n");
         return;
         }   
     

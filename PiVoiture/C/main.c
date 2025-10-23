@@ -130,10 +130,10 @@ int main(int argc, char *argv[]) {
     pthread_create(&thread_autorisationdepassement,NULL,receptioncontrolleur,(void *)&autorisationdepassement);
     pthread_create(&thread_objectifsuivant,NULL,receptioncontrolleur,(void *)&objectifsuivant);
     pthread_create(&thread_getposition,NULL,receptionposition,NULL);
-    pthread_create(&thread_envoiposition,NULL,envoideposition,NULL);
     //pthread_create(&thread_initialisation,NULL,(void *)&initialisation,NULL);//on attend que le programme du controleur soit bien commencé, on fait ça avec un thread à part afin d'être
     //pthread_join(thread_initialisation,NULL);
     initialisation(6005);
+    pthread_create(&thread_envoiposition,NULL,envoideposition,NULL);
     sddemandedereservation =startenvoicontrolleur(&demandereservation);
     sdobjectifsuivant=startenvoicontrolleur(&objectifsuivant);
     sdenvoiposition=startenvoicontrolleur(&envoiposition);
@@ -575,7 +575,7 @@ void initialisation(int port)
     
     
     // Etape 4 : on se met l'ecoute des demandes des connexions
-    
+    printf("attente de connexion au controlleur \n");
     listen(se, 8);
     printf("Connexion au controleur réussi !\n");
     

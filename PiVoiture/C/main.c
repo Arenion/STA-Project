@@ -532,7 +532,7 @@ void *receptionposition(void *arg)
                 {
                     premfois = false;
                 }
-                printf("X: %d  Y: %d", POSITION.x, POSITION.y);
+                //printf("X: %d  Y: %d", POSITION.x, POSITION.y);
                 POSITION.x = new_pos.x;
                 POSITION.y = new_pos.y;
                 pthread_mutex_unlock(&MUTEX_POSITION);

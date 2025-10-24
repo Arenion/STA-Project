@@ -127,8 +127,9 @@ bool step_navigation(bool entering)
             }
             printf("NAVIGATION: passage à l'étape '%s'\n", path.nodes[current_etape]->name);
             // TEMP
+            printf("NAVIGATION: Attente temporaire pour démo\n");
             stopcommand();
-            usleep(3000000);
+            usleep(10000000);
             // TEMP
             // Else we check the new step does not necesitate a new reservation.
             current_state = VERIFRESERVATION;

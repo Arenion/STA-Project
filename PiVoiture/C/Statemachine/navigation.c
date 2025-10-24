@@ -106,7 +106,7 @@ bool step_navigation(bool entering)
 
         printf("NAVIGATION: Execution de l'étape.\n");
         // Execute step
-        lignedroite(path.nodes[current_etape]);
+        path.nodes[current_etape]->passing_fct(path.nodes[current_etape]);
 
         // Check if step finished
         pthread_mutex_lock(&MUTEX_POSITION);

@@ -13,7 +13,7 @@ void send_command(int fd, int8_t rpmg, int8_t rpmd) {
     int8_t frame[3] = {-128, rpmg,rpmd };
     write(fd, frame, 3);
     tcdrain(fd);
-    printf("Commande envoyée : %d %d\n", rpmg,rpmd);
+    //printf("Commande envoyée : %d %d\n", rpmg,rpmd);
 }
 
 void stopcommand(){

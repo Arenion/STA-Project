@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 
     struct arg_socket demandestop = {6002, "0"}; // envoi de 1 pour une demande d'arrét
 
-    struct arg_socket demandereservation = {6000, "0"}; // Pour la demande de reservation, on note juste un entier représentant le tronçon demandé
+    struct arg_socket demandereservation = {6005, "0"}; // Pour la demande de reservation, on note juste un entier représentant le tronçon demandé
 
     struct arg_socket reussiteobjectif = {6001, "0"}; // 0 pour non réussite, 1 pour réussite
 
@@ -483,6 +483,18 @@ void *receptionposition(void *arg)
     signal(SIGINT, CtrlHandler);
     signal(SIGQUIT, CtrlHandler);
 
+    // ---- TCP vers serveur (contrôleur) ----
+    int sd1 = socket(AF_INET, SOCK_STREAM, 0);
+    CHECK_ERROR(sd1, -1, "Erreur creation socket");
+    struct sockaddr_in adrserv;
+    adrserv.sin_family = AF_INET;
+    adrserv.sin_port   = htons(6000);
+    adrserv.sin_addr.s_addr = inet_addr("192.168.8.241");
+    int erreur = connect(sd1, (const struct sockaddr*)&adrserv, sizeof(adrserv));
+    CHECK_ERROR(erreur, -1, "La connexion n'a pas été ouverte");
+    printf("Connecté au serveur %s:%d\n", "192.168.8.241", 6000);
+
+
     // ---- Marvelmind ----
     const char *ttyFileName = DEFAULT_TTY_FILENAME; // ex: /dev/ttyACM0
     struct MarvelmindHedge *hedge = createMarvelmindHedge();
@@ -536,6 +548,12 @@ void *receptionposition(void *arg)
                 POSITION.x = new_pos.x;
                 POSITION.y = new_pos.y;
                 pthread_mutex_unlock(&MUTEX_POSITION);
+                pos_send.x = new_pos.x;
+                pos_send.y = new_pos.y;
+                pos_send.z = new_pos.z;
+                pos_send.timestamp = new_pos.timestamp.timestamp64;
+
+                send(sd1, &pos_send, sizeof(pos_send), 0);
             }
         }
     }
@@ -543,8 +561,8 @@ void *receptionposition(void *arg)
     // ---- Arrêts propres ----
     stopMarvelmindHedge(hedge);
     destroyMarvelmindHedge(hedge);
-    send(sdenvoiposition, "fin", 4, 0);
-    close(sdenvoiposition);
+    send(sd1, "fin", 4, 0);
+    close(sd1);
     printf("Déconnexion du serveur.\n");
 }
 

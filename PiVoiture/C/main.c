@@ -198,11 +198,11 @@ void *lecturedonneescamera(void *arg)
         if (nbcar)
         {
             strcpy(INFOCAMERA, buff_lect);
-            printf("Infos caméra reçues: ");
-            printf(INFOCAMERA);
+            //printf("Infos caméra reçues: ");
+            //printf(INFOCAMERA);
             sscanf(INFOCAMERA, "%f %s %s %s", &ratio, vitesse, obstacle, panneau);
-            printf(" ratio %f\n", ratio);
-            printf("vitesse %s\n", vitesse);
+            //printf(" ratio %f\n", ratio);
+            //printf("vitesse %s\n", vitesse);
             pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
             INFORMATIONARDUINO.ratio = ratio;
             INFORMATIONARDUINO.RPM = LENT;
@@ -210,7 +210,7 @@ void *lecturedonneescamera(void *arg)
             // if (strcmp(vitesse,"RAPIDE"))INFORMATIONARDUINO.RPM=RAPIDE;
             // if (strcmp(vitesse,"STOP"))INFORMATIONARDUINO.RPM=0;
             pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
-            printf("\n");
+            //printf("\n");
         }
         if (strcmp(buff_lect, "exit") == 0)
         {

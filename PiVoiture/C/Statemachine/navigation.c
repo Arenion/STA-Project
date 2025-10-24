@@ -114,6 +114,7 @@ bool step_navigation(bool entering)
         pthread_mutex_unlock(&MUTEX_POSITION);
         // TODO : gérer le point d'arrivé.
         // Vérification de si on est derrière le dernier segment du noeud, ou proche du dernier point.
+        printf("NAVIGATION: Vérification du fin d'étape\n");
         if (distance_between_positions(path.nodes[current_etape]->line.vertices[path.nodes[current_etape]->line.n_vertices - 1], current_position) < 10.0f || point_after_segment(path.nodes[current_etape]->line.vertices[path.nodes[current_etape]->line.n_vertices - 2], path.nodes[current_etape]->line.vertices[path.nodes[current_etape]->line.n_vertices - 1], current_position)) // are we arrived to end of step ?
         {
             printf("NAVIGATION: étape '%s' finie.\n", path.nodes[current_etape]->name);

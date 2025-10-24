@@ -47,15 +47,30 @@ void lignedroite(struct map_node *node){
 }
 
 void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]){
-    float erreur=ratio-0.5;
-    if (erreur>=0){
+
+    if (ratio==0.5){
+
         vitessemot[0]=(int8_t)RPM;
-        vitessemot[1]=(int8_t)(RPM*(1-4*erreur));
+
+        vitessemot[1]=(int8_t)RPM;//on prend l'opposé pour la vitesse du moteur droit car celui ci est monté à l'envers
+
     };
-    if(erreur<0){
-        vitessemot[0]=(int8_t)(RPM*(1+4*erreur));
-        vitessemot[1]=(int8_t)(RPM);
-    };
+
+    if (ratio>0.5){
+
+        vitessemot[0]=(int8_t)RPM;
+
+        vitessemot[1]=(int8_t)(RPM-(ratio-0.5)*4*RPM);
+
+    }
+
+    if(ratio<0.5){
+
+        vitessemot[0]=(int8_t)-RPM+4*RPM*ratio;
+
+        vitessemot[1]=(int8_t)RPM;
+
+    }
 
 }
 

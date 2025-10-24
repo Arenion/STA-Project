@@ -643,7 +643,7 @@ static struct map_node virage1_node = {
     .name = "virage1",
     .line = {.n_vertices = ARRAY_SIZE(virage1_vertices), .vertices = virage1_vertices},
     .weight = 0.0f,
-    .passing_fct = followtraj,
+    .passing_fct = lignedroite,
     .reservation = PASDERESERVATION,
     .next_nodes = {.n_nodes = ARRAY_SIZE(virage1_node_next), .nodes = virage1_node_next}};
 

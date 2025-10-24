@@ -557,7 +557,7 @@ void *receptionposition(void *arg)
             }
             // Réception non bloquante de l’objectif
             int nbytes = recv(sd1, &goal, sizeof(goal), MSG_DONTWAIT);
-            if (nbytes == (int) sizeof(goal)) {
+            if (nbytes == (int) sizeof(goal) && goal.z == 0) {
                 pthread_mutex_lock(&MUTEX_NEXTOBJECTIF);
                 NEXTOBJECTIF.x = goal.x;
                 NEXTOBJECTIF.y = goal.y;

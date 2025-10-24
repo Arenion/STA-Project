@@ -50,10 +50,10 @@ void ratRPMtovitmot(float ratio, int RPM, int8_t vitessemot[2]){
     float erreur=ratio-0.5;
     if (erreur<=0){
         vitessemot[0]=(int8_t)RPM;
-        vitessemot[1]=(int8_t)(RPM*(1-3*erreur));
+        vitessemot[1]=(int8_t)(RPM*(1-4*erreur));
     };
     if(erreur>0){
-        vitessemot[0]=(int8_t)(RPM*(1+3*erreur));
+        vitessemot[0]=(int8_t)(RPM*(1+4*erreur));
         vitessemot[1]=(int8_t)(RPM);
     };
 
@@ -84,11 +84,11 @@ void followtraj(struct map_node * NodeP){
     pthread_mutex_unlock(&MUTEX_POSITION);
     struct position voiture={xv,yv};
     struct line LINE =Node.line;
-    point_line_distance2(LINE, voiture, segment);
-    float ratio=calculratiosuivitraj(segment[0],segment[1],voiture);
-    pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
-    int RPM= INFORMATIONARDUINO.RPM;
-    pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
+    // point_line_distance2(LINE, voiture, segment);
+    // float ratio=calculratiosuivitraj(segment[0],segment[1],voiture);
+    // pthread_mutex_lock(&MUTEX_INFORMATIONARDUINO);
+    // int RPM= INFORMATIONARDUINO.RPM;
+    // pthread_mutex_unlock(&MUTEX_INFORMATIONARDUINO);
     pthread_mutex_lock(&MUTEX_ERREUR_ANGULAIRE);
     float erang= erreur_angulaire;
     pthread_mutex_unlock(&MUTEX_ERREUR_ANGULAIRE);

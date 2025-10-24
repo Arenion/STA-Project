@@ -3,9 +3,10 @@
 
 
 
-
+#include "Statemachine/map.h"
 #include "Statemachine/statemachine.h"
 #include "global.c"
+#include "communicationarduino.h"
 void *lecturedonneescamera(void *arg);//connexion de socket de la caméra pour lire données: caméra -> voiture
 void *receptioncontrolleur(void * argu);// fonction permettant de recevoir des données du controlleur: controlleur -> voiture
 int startenvoicontrolleur(struct arg_socket * arg);//fonction envoyant des données 
@@ -146,9 +147,8 @@ int main(int argc, char *argv[]) {
     //pthread_join(thread_sendcommandarduino,NULL);
     pthread_join(thread_getposition,NULL);
     pthread_join(thread_socketcamera,NULL);
-    pthread_join(thread_autorisationdepassement,NULL);
-    pthread_join(thread_objectifsuivant,NULL);
-    pthread_join(thread_getposition,NULL);
+    // pthread_join(thread_autorisationdepassement,NULL);
+    // pthread_join(thread_objectifsuivant,NULL);
     close(FD);
     close(sddemandedereservation);
     close(sdobjectifsuivant);

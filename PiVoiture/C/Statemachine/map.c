@@ -186,7 +186,7 @@ float find_shortest_path(struct map_node *start, struct map_node *goal,
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 // ---- Points (shared coordinates) ----
-#define P1 {6201, 3861}
+#define P1 {5349, 1290}
 #define P2 {5224, 1066}
 #define P3 {5177, 974}
 #define P4 {5088, 900}

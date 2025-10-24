@@ -555,6 +555,16 @@ void *receptionposition(void *arg)
 
                 send(sd1, &pos_send, sizeof(pos_send), 0);
             }
+            // Réception non bloquante de l’objectif
+            int nbytes = recv(sd1, &goal, sizeof(goal), MSG_DONTWAIT);
+            if (nbytes == (int) sizeof(goal)) {
+                pthread_mutex_lock(&MUTEX_NEXTOBJECTIF);
+                NEXTOBJECTIF.x = goal.x;
+                NEXTOBJECTIF.y = goal.y;
+                pthread_mutex_unlock(&MUTEX_NEXTOBJECTIF);
+                printf("Objectif reçu → X=%d | Y=%d | Z=%d\n",
+                       goal.x, goal.y, goal.z);
+            }
         }
     }
 

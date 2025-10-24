@@ -3,7 +3,7 @@
 struct infoarduino INFORMATIONARDUINO;
 pthread_mutex_t MUTEX_INFORMATIONARDUINO;
 
-struct position NEXTOBJECTIF = {5224, 1067};
+struct position NEXTOBJECTIF = OBJECTIF_STOP;
 pthread_mutex_t MUTEX_NEXTOBJECTIF;
 
 struct position POSITION;//position actuelle de la voiture

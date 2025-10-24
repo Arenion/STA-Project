@@ -104,7 +104,7 @@ bool step_navigation(bool entering)
             first_obstacle_seen = true;
         }
 
-        printf("NAVIGATION: Execution de l'étape.\n");
+        printf("NAVIGATION: Execution de l'étape '%s'.\n", path.nodes[current_etape]->name);
         // Execute step
         path.nodes[current_etape]->passing_fct(path.nodes[current_etape]);
 

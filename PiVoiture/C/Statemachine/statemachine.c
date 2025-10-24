@@ -47,7 +47,7 @@ void step_statemachine()
     case PAUSE:
         if (entering)
         {
-            printf("STATEMACHINE: Mise en pause du train.\n");
+            printf("STATEMACHINE: Mise en pause de la voiture.\n");
             stopcommand();
             entering = false;
         }

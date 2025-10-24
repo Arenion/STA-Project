@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
     if (argc != 3)
     {
         fprintf(stderr, "Usage: %s <port> <baudrate>\n", argv[0]);
-        fprintf(stderr, "Exemple: %s /dev/ttyAMA0 9600\n", argv[0]);
+        fprintf(stderr, "Exemple: %s /dev/ttyAMA0 115200\n", argv[0]);
         return 1;
     }
 
